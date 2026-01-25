@@ -2,19 +2,19 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.joshuafeld</groupId>
+    <groupId>com.joshuafeld.athly.backend</groupId>
     <artifactId>athly-backend</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <packaging>pom</packaging>
 
     <modules>
-        <module>athly-common</module>
-        <module>athly-user</module>
-        <module>athly-workout</module>
-        <module>athly-nutrition</module>
-        <module>athly-gateway</module>
-        <module>athly-config</module>
+        <module>common</module>
+        <module>config</module>
+        <module>gateway</module>
+        <module>nutrition</module>
+        <module>user</module>
+        <module>workout</module>
     </modules>
 
     <properties>
@@ -28,7 +28,7 @@
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
-                <version>3.4.5</version>
+                <version>4.0.2</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -36,7 +36,7 @@
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-dependencies</artifactId>
-                <version>2024.0.1</version>
+                <version>2025.1.0</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -49,7 +49,7 @@
                 <plugin>
                     <groupId>org.springframework.boot</groupId>
                     <artifactId>spring-boot-maven-plugin</artifactId>
-                    <version>3.4.5</version>
+                    <version>4.0.2</version>
                 </plugin>
             </plugins>
         </pluginManagement>

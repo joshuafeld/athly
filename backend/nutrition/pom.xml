@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.joshuafeld</groupId>
+        <groupId>com.joshuafeld.athly.backend</groupId>
         <artifactId>athly-backend</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
@@ -34,7 +34,7 @@
         </dependency>
 
         <dependency>
-            <groupId>com.joshuafeld</groupId>
+            <groupId>com.joshuafeld.athly.backend</groupId>
             <artifactId>athly-common</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>

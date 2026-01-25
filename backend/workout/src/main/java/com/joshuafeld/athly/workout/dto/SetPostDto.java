@@ -1,6 +1,6 @@
 package com.joshuafeld.athly.workout.dto;
 
-import com.joshuafeld.athly.common.model.workout.SetType;
+import com.joshuafeld.athly.workout.model.SetType;
 import jakarta.validation.constraints.NotNull;
 
 /**

@@ -1,4 +1,4 @@
-package com.joshuafeld.athly.common.model.workout;
+package com.joshuafeld.athly.workout.model;
 
 /**
  * An enum for all set types.
