@@ -23,7 +23,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/exercises")
-public final class ExerciseController {
+public class ExerciseController {
 
     private final ExerciseService service;
 

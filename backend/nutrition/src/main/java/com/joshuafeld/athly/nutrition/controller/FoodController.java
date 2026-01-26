@@ -23,7 +23,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/foods")
-public final class FoodController {
+public class FoodController {
 
     private final FoodService service;
 
