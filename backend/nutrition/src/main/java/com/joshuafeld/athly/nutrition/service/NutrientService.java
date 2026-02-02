@@ -4,6 +4,7 @@ import com.joshuafeld.athly.nutrition.dto.NutrientDto;
 import com.joshuafeld.athly.nutrition.dto.NutrientPatchDto;
 import com.joshuafeld.athly.nutrition.dto.NutrientPostDto;
 import com.joshuafeld.athly.nutrition.dto.NutrientPutDto;
+import com.joshuafeld.athly.nutrition.mapper.NutrientMapper;
 import com.joshuafeld.athly.nutrition.model.Nutrient;
 import com.joshuafeld.athly.nutrition.repository.FoodRepository;
 import com.joshuafeld.athly.nutrition.repository.NutrientRepository;
@@ -22,16 +23,21 @@ public class NutrientService {
     private final NutrientRepository repository;
     private final FoodRepository foodRepository;
 
+    private final NutrientMapper mapper;
+
     /**
      * Creates an instance of an {@code NutrientService} class.
      *
      * @param repository the value for the {@code repository} component
      * @param foodRepository the value for the {@code foodRepository} component
+     * @param mapper the value for the {@code mapper} component
      */
     public NutrientService(final NutrientRepository repository,
-                           final FoodRepository foodRepository) {
+                           final FoodRepository foodRepository,
+                           final NutrientMapper mapper) {
         this.repository = repository;
         this.foodRepository = foodRepository;
+        this.mapper = mapper;
     }
 
     /**
@@ -43,7 +49,7 @@ public class NutrientService {
      */
     @Transactional
     public NutrientDto post(final Long food, final NutrientPostDto dto) {
-        return toDto(repository.save(new Nutrient(
+        return mapper.toDto(repository.save(new Nutrient(
                 foodRepository.requireById(food), dto.type(), dto.value()
         )));
     }
@@ -56,7 +62,7 @@ public class NutrientService {
      */
     @Transactional(readOnly = true)
     public List<NutrientDto> get(final Long food) {
-        return repository.findAll(food).stream().map(this::toDto).toList();
+        return repository.findAll(food).stream().map(mapper::toDto).toList();
     }
 
     /**
@@ -68,7 +74,7 @@ public class NutrientService {
      */
     @Transactional(readOnly = true)
     public NutrientDto get(final Long food, final Long id) {
-        return toDto(repository.requireById(id));
+        return mapper.toDto(repository.requireById(id));
     }
 
     /**
@@ -83,7 +89,7 @@ public class NutrientService {
         Nutrient nutrient = repository.requireById(id);
         Optional.ofNullable(dto.type()).ifPresent(nutrient::type);
         Optional.ofNullable(dto.value()).ifPresent(nutrient::value);
-        return toDto(repository.save(nutrient));
+        return mapper.toDto(repository.save(nutrient));
     }
 
     /**
@@ -98,7 +104,7 @@ public class NutrientService {
         Nutrient nutrient = repository.requireById(id);
         nutrient.type(dto.type());
         nutrient.value(dto.value());
-        return toDto(repository.save(nutrient));
+        return mapper.toDto(repository.save(nutrient));
     }
 
     /**
@@ -109,14 +115,5 @@ public class NutrientService {
     @Transactional
     public void delete(final Long id) {
         repository.deleteById(id);
-    }
-
-    private NutrientDto toDto(final Nutrient nutrient) {
-        return new NutrientDto(
-                nutrient.id(),
-                nutrient.food().id(),
-                nutrient.type(),
-                nutrient.value()
-        );
     }
 }

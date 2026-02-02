@@ -4,6 +4,7 @@ import com.joshuafeld.athly.nutrition.dto.FoodDto;
 import com.joshuafeld.athly.nutrition.dto.FoodPatchDto;
 import com.joshuafeld.athly.nutrition.dto.FoodPostDto;
 import com.joshuafeld.athly.nutrition.dto.FoodPutDto;
+import com.joshuafeld.athly.nutrition.mapper.FoodMapper;
 import com.joshuafeld.athly.nutrition.model.Food;
 import com.joshuafeld.athly.nutrition.model.Nutrient;
 import com.joshuafeld.athly.nutrition.model.Serving;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,13 +25,18 @@ public class FoodService {
 
     private final FoodRepository repository;
 
+    private final FoodMapper mapper;
+
     /**
      * Creates an instance of a {@code FoodService} class.
      *
      * @param repository the value for the {@code repository} component
+     * @param mapper the value for the {@code mapper} component
      */
-    public FoodService(final FoodRepository repository) {
+    public FoodService(final FoodRepository repository,
+                       final FoodMapper mapper) {
         this.repository = repository;
+        this.mapper = mapper;
     }
 
     /**
@@ -40,11 +47,11 @@ public class FoodService {
      */
     @Transactional
     public FoodDto post(final FoodPostDto dto) {
-        return toDto(repository.save(new Food(
+        return mapper.toDto(repository.save(new Food(
                 dto.name(),
                 dto.manufacturer(),
-                new ArrayList<>(),
-                new ArrayList<>(),
+                Collections.emptySet(),
+                Collections.emptySet(),
                 dto.creator()
         )));
     }
@@ -56,7 +63,7 @@ public class FoodService {
      */
     @Transactional(readOnly = true)
     public List<FoodDto> get() {
-        return repository.findAll().stream().map(this::toDto).toList();
+        return repository.findAll().stream().map(mapper::toDto).toList();
     }
 
     /**
@@ -67,7 +74,7 @@ public class FoodService {
      */
     @Transactional(readOnly = true)
     public FoodDto get(final Long id) {
-        return toDto(repository.requireById(id));
+        return mapper.toDto(repository.requireById(id));
     }
 
     /**
@@ -83,7 +90,7 @@ public class FoodService {
         Optional.ofNullable(dto.name()).ifPresent(food::name);
         Optional.ofNullable(dto.manufacturer()).ifPresent(food::manufacturer);
         Optional.ofNullable(dto.creator()).ifPresent(food::creator);
-        return toDto(repository.save(food));
+        return mapper.toDto(repository.save(food));
     }
 
     /**
@@ -99,7 +106,7 @@ public class FoodService {
         food.name(dto.name());
         food.manufacturer(dto.manufacturer());
         food.creator(dto.creator());
-        return toDto(repository.save(food));
+        return mapper.toDto(repository.save(food));
     }
 
     /**
@@ -110,16 +117,5 @@ public class FoodService {
     @Transactional
     public void delete(final Long id) {
         repository.deleteById(id);
-    }
-
-    private FoodDto toDto(final Food food) {
-        return new FoodDto(
-                food.id(),
-                food.name(),
-                food.manufacturer(),
-                food.nutrients().stream().map(Nutrient::id).toList(),
-                food.servings().stream().map(Serving::id).toList(),
-                food.creator()
-        );
     }
 }

@@ -9,7 +9,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
-import java.util.List;
+import java.util.Set;
 
 /**
  * A food entity.
@@ -33,14 +33,14 @@ public class Food {
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
-    private List<Nutrient> nutrients;
+    private Set<Nutrient> nutrients;
 
     @OneToMany(
             mappedBy = "food",
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
-    private List<Serving> servings;
+    private Set<Serving> servings;
 
     private Long creator;
 
@@ -61,8 +61,8 @@ public class Food {
      */
     public Food(final String name,
                 final String manufacturer,
-                final List<Nutrient> nutrients,
-                final List<Serving> servings,
+                final Set<Nutrient> nutrients,
+                final Set<Serving> servings,
                 final Long creator) {
         this.name = name;
         this.manufacturer = manufacturer;
@@ -104,7 +104,7 @@ public class Food {
      * @return the value of the {@code manufacturer} component
      */
     public String manufacturer() {
-        return name;
+        return manufacturer;
     }
 
     /**
@@ -122,7 +122,7 @@ public class Food {
      *
      * @return the value of the {@code nutrients} component
      */
-    public List<Nutrient> nutrients() {
+    public Set<Nutrient> nutrients() {
         return nutrients;
     }
 
@@ -131,7 +131,7 @@ public class Food {
      *
      * @param nutrients the value for the {@code nutrients} component
      */
-    public void nutrients(final List<Nutrient> nutrients) {
+    public void nutrients(final Set<Nutrient> nutrients) {
         this.nutrients = nutrients;
     }
 
@@ -140,7 +140,7 @@ public class Food {
      *
      * @return the value of the {@code servings} component
      */
-    public List<Serving> servings() {
+    public Set<Serving> servings() {
         return servings;
     }
 
@@ -149,7 +149,7 @@ public class Food {
      *
      * @param servings the value for the {@code servings} component
      */
-    public void servings(final List<Serving> servings) {
+    public void servings(final Set<Serving> servings) {
         this.servings = servings;
     }
 

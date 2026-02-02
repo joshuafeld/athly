@@ -1,9 +1,7 @@
 package com.joshuafeld.athly.workout.service;
 
-import com.joshuafeld.athly.workout.dto.ExerciseDto;
-import com.joshuafeld.athly.workout.dto.ExercisePatchDto;
-import com.joshuafeld.athly.workout.dto.ExercisePostDto;
-import com.joshuafeld.athly.workout.dto.ExercisePutDto;
+import com.joshuafeld.athly.workout.dto.*;
+import com.joshuafeld.athly.workout.mapper.ExerciseMapper;
 import com.joshuafeld.athly.workout.model.Exercise;
 import com.joshuafeld.athly.workout.repository.ExerciseRepository;
 import org.springframework.stereotype.Service;
@@ -20,13 +18,18 @@ public class ExerciseService {
 
     private final ExerciseRepository repository;
 
+    private final ExerciseMapper mapper;
+
     /**
      * Creates an instance of an {@code ExerciseService} class.
      *
      * @param repository the value for the {@code repository} component
+     * @param mapper the value for the {@code mapper} component
      */
-    public ExerciseService(final ExerciseRepository repository) {
+    public ExerciseService(final ExerciseRepository repository,
+                           final ExerciseMapper mapper) {
         this.repository = repository;
+        this.mapper = mapper;
     }
 
     /**
@@ -37,8 +40,8 @@ public class ExerciseService {
      */
     @Transactional
     public ExerciseDto post(final ExercisePostDto dto) {
-        return toDto(repository.save(new Exercise(dto.name(), dto.equipment(),
-                dto.muscle(), dto.creator())));
+        return mapper.toDto(repository.save(new Exercise(dto.name(),
+                dto.equipment(), dto.muscle(), dto.creator())));
     }
 
     /**
@@ -48,7 +51,7 @@ public class ExerciseService {
      */
     @Transactional(readOnly = true)
     public List<ExerciseDto> get() {
-        return repository.findAll().stream().map(this::toDto).toList();
+        return repository.findAll().stream().map(mapper::toDto).toList();
     }
 
     /**
@@ -59,7 +62,7 @@ public class ExerciseService {
      */
     @Transactional(readOnly = true)
     public ExerciseDto get(final Long id) {
-        return toDto(repository.requireById(id));
+        return mapper.toDto(repository.requireById(id));
     }
 
     /**
@@ -76,7 +79,7 @@ public class ExerciseService {
         Optional.ofNullable(dto.equipment()).ifPresent(exercise::equipment);
         Optional.ofNullable(dto.muscle()).ifPresent(exercise::muscle);
         Optional.ofNullable(dto.creator()).ifPresent(exercise::creator);
-        return toDto(repository.save(exercise));
+        return mapper.toDto(repository.save(exercise));
     }
 
     /**
@@ -93,7 +96,7 @@ public class ExerciseService {
         exercise.equipment(dto.equipment());
         exercise.muscle(dto.muscle());
         exercise.creator(dto.creator());
-        return toDto(repository.save(exercise));
+        return mapper.toDto(repository.save(exercise));
     }
 
     /**
@@ -104,15 +107,5 @@ public class ExerciseService {
     @Transactional
     public void delete(final Long id) {
         repository.deleteById(id);
-    }
-
-    private ExerciseDto toDto(final Exercise exercise) {
-        return new ExerciseDto(
-                exercise.id(),
-                exercise.name(),
-                exercise.equipment(),
-                exercise.muscle(),
-                exercise.creator()
-        );
     }
 }

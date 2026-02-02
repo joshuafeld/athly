@@ -4,6 +4,7 @@ import com.joshuafeld.athly.user.dto.UserPatchDto;
 import com.joshuafeld.athly.user.dto.UserPostDto;
 import com.joshuafeld.athly.user.dto.UserDto;
 import com.joshuafeld.athly.user.dto.UserPutDto;
+import com.joshuafeld.athly.user.mapper.UserMapper;
 import com.joshuafeld.athly.user.model.User;
 import com.joshuafeld.athly.user.repository.UserRepository;
 import org.springframework.stereotype.Service;
@@ -20,13 +21,18 @@ public class UserService {
 
     private final UserRepository repository;
 
+    private final UserMapper mapper;
+
     /**
      * Creates an instance of a {@code UserService} class.
      *
      * @param repository the value for the {@code repository} component
+     * @param mapper the value for the {@code mapper} component
      */
-    public UserService(final UserRepository repository) {
+    public UserService(final UserRepository repository,
+                       final UserMapper mapper) {
         this.repository = repository;
+        this.mapper = mapper;
     }
 
     /**
@@ -37,8 +43,8 @@ public class UserService {
      */
     @Transactional
     public UserDto post(final UserPostDto dto) {
-        return toDto(repository.save(new User(dto.username(), dto.email(),
-                dto.firstName(), dto.lastName())));
+        return mapper.toDto(repository.save(new User(dto.username(),
+                dto.email(), dto.firstName(), dto.lastName())));
     }
 
     /**
@@ -48,7 +54,7 @@ public class UserService {
      */
     @Transactional(readOnly = true)
     public List<UserDto> get() {
-        return repository.findAll().stream().map(this::toDto).toList();
+        return repository.findAll().stream().map(mapper::toDto).toList();
     }
 
     /**
@@ -59,7 +65,7 @@ public class UserService {
      */
     @Transactional(readOnly = true)
     public UserDto get(final Long id) {
-        return toDto(repository.requireById(id));
+        return mapper.toDto(repository.requireById(id));
     }
 
     /**
@@ -76,7 +82,7 @@ public class UserService {
         Optional.ofNullable(dto.email()).ifPresent(user::email);
         Optional.ofNullable(dto.firstName()).ifPresent(user::firstName);
         Optional.ofNullable(dto.lastName()).ifPresent(user::lastName);
-        return toDto(repository.save(user));
+        return mapper.toDto(repository.save(user));
     }
 
     /**
@@ -93,7 +99,7 @@ public class UserService {
         user.email(dto.email());
         user.firstName(dto.firstName());
         user.lastName(dto.lastName());
-        return toDto(repository.save(user));
+        return mapper.toDto(repository.save(user));
     }
 
     /**
@@ -104,15 +110,5 @@ public class UserService {
     @Transactional
     public void delete(final Long id) {
         repository.deleteById(id);
-    }
-
-    private UserDto toDto(final User user) {
-        return new UserDto(
-                user.id(),
-                user.username(),
-                user.email(),
-                user.firstName(),
-                user.lastName()
-        );
     }
 }

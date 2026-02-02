@@ -4,6 +4,7 @@ import com.joshuafeld.athly.workout.dto.SegmentDto;
 import com.joshuafeld.athly.workout.dto.SegmentPostDto;
 import com.joshuafeld.athly.workout.dto.SegmentPatchDto;
 import com.joshuafeld.athly.workout.dto.SegmentPutDto;
+import com.joshuafeld.athly.workout.mapper.SegmentMapper;
 import com.joshuafeld.athly.workout.model.Segment;
 import com.joshuafeld.athly.workout.model.Set;
 import com.joshuafeld.athly.workout.repository.ExerciseRepository;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,9 +24,11 @@ import java.util.Optional;
 @Service
 public class SegmentService {
 
+    private final SegmentRepository repository;
     private final ExerciseRepository exerciseRepository;
     private final WorkoutRepository workoutRepository;
-    private final SegmentRepository repository;
+
+    private final SegmentMapper mapper;
 
     /**
      * Creates an instance of an {@code SegmentService} class.
@@ -34,13 +38,16 @@ public class SegmentService {
      *                           component
      * @param workoutRepository the value for the {@code workoutRepository}
      *                          component
+     * @param mapper the value for the {@code mapper} component
      */
     public SegmentService(final SegmentRepository repository,
                           final ExerciseRepository exerciseRepository,
-                          final WorkoutRepository workoutRepository) {
+                          final WorkoutRepository workoutRepository,
+                          final SegmentMapper mapper) {
         this.repository = repository;
         this.exerciseRepository = exerciseRepository;
         this.workoutRepository = workoutRepository;
+        this.mapper = mapper;
     }
 
     /**
@@ -52,10 +59,10 @@ public class SegmentService {
      */
     @Transactional
     public SegmentDto post(final Long workout, final SegmentPostDto dto) {
-        return toDto(repository.save(new Segment(
+        return mapper.toDto(repository.save(new Segment(
                 workoutRepository.requireById(workout),
                 exerciseRepository.requireById(dto.exercise()),
-                new ArrayList<>(),
+                Collections.emptyList(),
                 dto.rest()
         )));
     }
@@ -68,7 +75,7 @@ public class SegmentService {
      */
     @Transactional(readOnly = true)
     public List<SegmentDto> get(final Long workout) {
-        return repository.findAll(workout).stream().map(this::toDto).toList();
+        return repository.findAll(workout).stream().map(mapper::toDto).toList();
     }
 
     /**
@@ -80,7 +87,7 @@ public class SegmentService {
      */
     @Transactional(readOnly = true)
     public SegmentDto get(final Long workout, final Long id) {
-        return toDto(repository.requireById(id));
+        return mapper.toDto(repository.requireById(id));
     }
 
     /**
@@ -96,7 +103,7 @@ public class SegmentService {
         Optional.ofNullable(dto.exercise()).ifPresent(exercise ->
                 segment.exercise(exerciseRepository.requireById(exercise)));
         Optional.ofNullable(dto.rest()).ifPresent(segment::rest);
-        return toDto(repository.save(segment));
+        return mapper.toDto(repository.save(segment));
     }
 
     /**
@@ -111,7 +118,7 @@ public class SegmentService {
         Segment segment = repository.requireById(id);
         segment.exercise(exerciseRepository.requireById(dto.exercise()));
         segment.rest(dto.rest());
-        return toDto(repository.save(segment));
+        return mapper.toDto(repository.save(segment));
     }
 
     /**
@@ -122,15 +129,5 @@ public class SegmentService {
     @Transactional
     public void delete(final Long id) {
         repository.deleteById(id);
-    }
-
-    private SegmentDto toDto(final Segment segment) {
-        return new SegmentDto(
-                segment.id(),
-                segment.workout().id(),
-                segment.exercise().id(),
-                segment.sets().stream().map(Set::id).toList(),
-                segment.rest()
-        );
     }
 }

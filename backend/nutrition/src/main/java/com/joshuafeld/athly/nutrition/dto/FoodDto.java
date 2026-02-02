@@ -1,6 +1,6 @@
 package com.joshuafeld.athly.nutrition.dto;
 
-import java.util.List;
+import java.util.Set;
 
 /**
  * A data transfer object for a food request response.
@@ -15,7 +15,7 @@ public record FoodDto(
         Long id,
         String name,
         String manufacturer,
-        List<Long> nutrients,
-        List<Long> servings,
+        Set<Long> nutrients,
+        Set<Long> servings,
         Long creator
 ) { }

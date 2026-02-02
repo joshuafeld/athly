@@ -4,6 +4,7 @@ import com.joshuafeld.athly.workout.dto.SetDto;
 import com.joshuafeld.athly.workout.dto.SetPatchDto;
 import com.joshuafeld.athly.workout.dto.SetPostDto;
 import com.joshuafeld.athly.workout.dto.SetPutDto;
+import com.joshuafeld.athly.workout.mapper.SetMapper;
 import com.joshuafeld.athly.workout.model.Set;
 import com.joshuafeld.athly.workout.repository.SegmentRepository;
 import com.joshuafeld.athly.workout.repository.SetRepository;
@@ -22,17 +23,22 @@ public class SetService {
     private final SetRepository repository;
     private final SegmentRepository segmentRepository;
 
+    private final SetMapper mapper;
+
     /**
      * Creates an instance of an {@code SetService} class.
      *
      * @param repository the value for the {@code repository} component
      * @param segmentRepository the value for the {@code segmentRepository}
      *                          component
+     * @param mapper the value for the {@code mapper} component
      */
     public SetService(final SetRepository repository,
-                      final SegmentRepository segmentRepository) {
+                      final SegmentRepository segmentRepository,
+                      final SetMapper mapper) {
         this.repository = repository;
         this.segmentRepository = segmentRepository;
+        this.mapper = mapper;
     }
 
     /**
@@ -44,7 +50,7 @@ public class SetService {
      */
     @Transactional
     public SetDto post(final Long segment, final SetPostDto dto) {
-        return toDto(repository.save(new Set(
+        return mapper.toDto(repository.save(new Set(
                 segmentRepository.requireById(segment),
                 dto.type(), dto.weight(), dto.reps(), dto.done()
         )));
@@ -58,7 +64,7 @@ public class SetService {
      */
     @Transactional(readOnly = true)
     public List<SetDto> get(final Long segment) {
-        return repository.findAll(segment).stream().map(this::toDto).toList();
+        return repository.findAll(segment).stream().map(mapper::toDto).toList();
     }
 
     /**
@@ -70,7 +76,7 @@ public class SetService {
      */
     @Transactional(readOnly = true)
     public SetDto get(final Long segment, final Long id) {
-        return toDto(repository.requireById(id));
+        return mapper.toDto(repository.requireById(id));
     }
 
     /**
@@ -87,7 +93,7 @@ public class SetService {
         Optional.ofNullable(dto.weight()).ifPresent(set::weight);
         Optional.ofNullable(dto.reps()).ifPresent(set::reps);
         Optional.ofNullable(dto.done()).ifPresent(set::done);
-        return toDto(repository.save(set));
+        return mapper.toDto(repository.save(set));
     }
 
     /**
@@ -104,7 +110,7 @@ public class SetService {
         set.weight(dto.weight());
         set.reps(dto.reps());
         set.done(dto.done());
-        return toDto(repository.save(set));
+        return mapper.toDto(repository.save(set));
     }
 
     /**
@@ -115,16 +121,5 @@ public class SetService {
     @Transactional
     public void delete(final Long id) {
         repository.deleteById(id);
-    }
-
-    private SetDto toDto(final Set set) {
-        return new SetDto(
-                set.id(),
-                set.segment().id(),
-                set.type(),
-                set.weight(),
-                set.reps(),
-                set.done()
-        );
     }
 }
