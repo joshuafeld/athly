@@ -31,11 +31,11 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(final HttpSecurity http) {
         return http
+                .securityMatcher("/auth/**")
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(registry -> registry
                         .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
-                        .anyRequest().authenticated()
                 )
                 .httpBasic(Customizer.withDefaults())
                 .build();
@@ -53,17 +53,6 @@ public class SecurityConfig {
                 new RSAKey.Builder(properties.publicKey())
                         .privateKey(properties.privateKey()).build()
         )));
-    }
-
-    /**
-     * Configures the JWT decoder.
-     *
-     * @param properties the JWT configuration properties
-     * @return the configured JWT decoder
-     */
-    @Bean
-    public JwtDecoder jwtDecoder(final JwtProperties properties) {
-        return NimbusJwtDecoder.withPublicKey(properties.publicKey()).build();
     }
 
     /**
