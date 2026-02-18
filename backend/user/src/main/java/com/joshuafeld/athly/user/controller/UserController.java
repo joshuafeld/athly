@@ -1,7 +1,6 @@
 package com.joshuafeld.athly.user.controller;
 
 import com.joshuafeld.athly.user.dto.UserPatchDto;
-import com.joshuafeld.athly.user.dto.UserPostDto;
 import com.joshuafeld.athly.user.dto.UserDto;
 import com.joshuafeld.athly.user.dto.UserPutDto;
 import com.joshuafeld.athly.user.service.UserService;
@@ -10,7 +9,6 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,17 +32,6 @@ public class UserController {
      */
     public UserController(final UserService service) {
         this.service = service;
-    }
-
-    /**
-     * Creates a new user.
-     *
-     * @param dto the data for the user
-     * @return the data of the user
-     */
-    @PostMapping
-    public UserDto post(@RequestBody @Valid final UserPostDto dto) {
-        return service.post(dto);
     }
 
     /**

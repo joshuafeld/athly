@@ -1,7 +1,6 @@
 package com.joshuafeld.athly.user.service;
 
 import com.joshuafeld.athly.user.dto.UserPatchDto;
-import com.joshuafeld.athly.user.dto.UserPostDto;
 import com.joshuafeld.athly.user.dto.UserDto;
 import com.joshuafeld.athly.user.dto.UserPutDto;
 import com.joshuafeld.athly.user.mapper.UserMapper;
@@ -33,18 +32,6 @@ public class UserService {
                        final UserMapper mapper) {
         this.repository = repository;
         this.mapper = mapper;
-    }
-
-    /**
-     * Creates a new user.
-     *
-     * @param dto the data for the user
-     * @return the data of the user
-     */
-    @Transactional
-    public UserDto post(final UserPostDto dto) {
-        return mapper.toDto(repository.save(new User(dto.username(),
-                dto.email(), dto.firstName(), dto.lastName())));
     }
 
     /**

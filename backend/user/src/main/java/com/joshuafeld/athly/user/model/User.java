@@ -24,6 +24,9 @@ public class User {
     @Column(nullable = false, unique = true)
     private String email;
 
+    @Column(nullable = false)
+    private String password;
+
     private String firstName;
 
     private String lastName;
@@ -39,15 +42,18 @@ public class User {
      *
      * @param username the value for the {@code username} component
      * @param email the value for the {@code email} component
+     * @param password the value for the {@code password} component
      * @param firstName the value for the {@code firstName} component
      * @param lastName the value for the {@code lastName} component
      */
     public User(final String username,
                 final String email,
+                final String password,
                 final String firstName,
                 final String lastName) {
         this.username = username;
         this.email = email;
+        this.password = password;
         this.firstName = firstName;
         this.lastName = lastName;
     }
@@ -95,6 +101,24 @@ public class User {
      */
     public void email(final String email) {
         this.email = email;
+    }
+
+    /**
+     * Returns the value of the {@code password} component.
+     *
+     * @return the value of the {@code password} component
+     */
+    public String password() {
+        return password;
+    }
+
+    /**
+     * Sets the value of the {@code password} component.
+     *
+     * @param password the value for the {@code password} component
+     */
+    public void password(final String password) {
+        this.password = password;
     }
 
     /**

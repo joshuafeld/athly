@@ -1,0 +1,31 @@
+server:
+  port: 8080
+
+spring:
+  cloud:
+    gateway:
+      server:
+        webmvc:
+          routes:
+            - id: athly-user
+              uri: http://localhost:8081
+              predicates:
+                - Path=/user-management/**
+              filters:
+                - StripPrefix=1
+            - id: athly-workout
+              uri: http://localhost:8082
+              predicates:
+                - Path=/workout-management/**
+              filters:
+                - StripPrefix=1
+            - id: athly-nutrition
+              uri: http://localhost:8083
+              predicates:
+                - Path=/nutrition-management/**
+              filters:
+                - StripPrefix=1
+
+security:
+  jwt:
+    public-key-pem: ${JWT_PUBLIC_KEY}
