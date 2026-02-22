@@ -7,6 +7,10 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.List;
 
@@ -15,10 +19,14 @@ import java.util.List;
  */
 @Entity
 @Table(name = "workouts")
+@Getter
+@Setter
+@NoArgsConstructor
 public class Workout {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Setter(AccessLevel.NONE)
     private Long id;
 
     private Long creator;
@@ -32,62 +40,12 @@ public class Workout {
 
     /**
      * Creates an instance of a {@code Workout} class.
-     */
-    public Workout() { }
-
-    /**
-     * Creates an instance of a {@code Workout} class.
      *
      * @param creator the value for the {@code creator} component
      * @param segments the value for the {@code segments} component
      */
     public Workout(final Long creator, final List<Segment> segments) {
         this.creator = creator;
-        this.segments = segments;
-    }
-
-    /**
-     * Returns the value of the {@code id} component.
-     *
-     * @return the value of the {@code id} component
-     */
-    public Long id() {
-        return id;
-    }
-
-    /**
-     * Returns the value of the {@code creator} component.
-     *
-     * @return the value of the {@code creator} component
-     */
-    public Long creator() {
-        return creator;
-    }
-
-    /**
-     * Sets the value of the {@code creator} component.
-     *
-     * @param creator the value for the {@code creator} component
-     */
-    public void creator(final Long creator) {
-        this.creator = creator;
-    }
-
-    /**
-     * Returns the value of the {@code segments} component.
-     *
-     * @return the value of the {@code segments} component
-     */
-    public List<Segment> segments() {
-        return segments;
-    }
-
-    /**
-     * Sets the value of the {@code segments} component.
-     *
-     * @param segments the value for the {@code segments} component
-     */
-    public void segments(final List<Segment> segments) {
         this.segments = segments;
     }
 }

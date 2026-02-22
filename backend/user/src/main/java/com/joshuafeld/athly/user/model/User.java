@@ -1,11 +1,9 @@
 package com.joshuafeld.athly.user.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * A user entity.
@@ -26,6 +24,12 @@ public class User {
 
     @Column(nullable = false)
     private String password;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @Enumerated(EnumType.STRING)
+    @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
+    @Column(name = "role")
+    private Set<Role> roles;
 
     private String firstName;
 
@@ -119,6 +123,24 @@ public class User {
      */
     public void password(final String password) {
         this.password = password;
+    }
+
+    /**
+     * Returns the value of the {@code roles} component.
+     *
+     * @return the value of the {@code roles} component
+     */
+    public Set<Role> roles() {
+        return roles;
+    }
+
+    /**
+     * Sets the value of the {@code roles} component.
+     *
+     * @param roles the value for the {@code roles} component
+     */
+    public void roles(final Set<Role> roles) {
+        this.roles = roles;
     }
 
     /**

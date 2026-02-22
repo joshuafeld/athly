@@ -8,6 +8,10 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.Set;
 
@@ -16,10 +20,14 @@ import java.util.Set;
  */
 @Entity
 @Table(name = "foods")
+@Getter
+@Setter
+@NoArgsConstructor
 public class Food {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Setter(AccessLevel.NONE)
     private Long id;
 
     @Column(nullable = false)
@@ -46,12 +54,6 @@ public class Food {
 
     /**
      * Creates an instance of a {@code Food} class.
-     */
-    public Food() {
-    }
-
-    /**
-     * Creates an instance of a {@code Food} class.
      *
      * @param name the value for the {@code name} component
      * @param manufacturer the value for the {@code manufacturer} component
@@ -68,106 +70,6 @@ public class Food {
         this.manufacturer = manufacturer;
         this.nutrients = nutrients;
         this.servings = servings;
-        this.creator = creator;
-    }
-
-    /**
-     * Returns the value of the {@code id} component.
-     *
-     * @return the value of the {@code id} component
-     */
-    public Long id() {
-        return id;
-    }
-
-    /**
-     * Returns the value of the {@code name} component.
-     *
-     * @return the value of the {@code name} component
-     */
-    public String name() {
-        return name;
-    }
-
-    /**
-     * Sets the value of the {@code name} component.
-     *
-     * @param name the value for the {@code name} component
-     */
-    public void name(final String name) {
-        this.name = name;
-    }
-
-    /**
-     * Returns the value of the {@code manufacturer} component.
-     *
-     * @return the value of the {@code manufacturer} component
-     */
-    public String manufacturer() {
-        return manufacturer;
-    }
-
-    /**
-     * Sets the value of the {@code manufacturer} component.
-     *
-     * @param manufacturer the value for the {@code manufacturer} component
-     */
-    public void manufacturer(final String manufacturer) {
-        this.manufacturer = manufacturer;
-    }
-
-
-    /**
-     * Returns the value of the {@code nutrients} component.
-     *
-     * @return the value of the {@code nutrients} component
-     */
-    public Set<Nutrient> nutrients() {
-        return nutrients;
-    }
-
-    /**
-     * Sets the value of the {@code nutrients} component.
-     *
-     * @param nutrients the value for the {@code nutrients} component
-     */
-    public void nutrients(final Set<Nutrient> nutrients) {
-        this.nutrients = nutrients;
-    }
-
-    /**
-     * Returns the value of the {@code servings} component.
-     *
-     * @return the value of the {@code servings} component
-     */
-    public Set<Serving> servings() {
-        return servings;
-    }
-
-    /**
-     * Sets the value of the {@code servings} component.
-     *
-     * @param servings the value for the {@code servings} component
-     */
-    public void servings(final Set<Serving> servings) {
-        this.servings = servings;
-    }
-
-    /**
-     * Returns the value of the {@code creator} component.
-     *
-     * @return the value of the {@code creator} component
-     */
-    public Long creator() {
-        return creator;
-    }
-
-    /**
-     * Sets the value of the {@code creator} component.
-     *
-     * @param creator the value for the {@code creator} component
-     */
-    public void creator(final Long creator) {
         this.creator = creator;
     }
 }
