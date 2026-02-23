@@ -4,6 +4,7 @@ import com.joshuafeld.athly.workout.dto.*;
 import com.joshuafeld.athly.workout.mapper.ExerciseMapper;
 import com.joshuafeld.athly.workout.model.Exercise;
 import com.joshuafeld.athly.workout.repository.ExerciseRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,23 +15,12 @@ import java.util.Optional;
  * An exercise service.
  */
 @Service
+@AllArgsConstructor
 public class ExerciseService {
 
     private final ExerciseRepository repository;
 
     private final ExerciseMapper mapper;
-
-    /**
-     * Creates an instance of an {@code ExerciseService} class.
-     *
-     * @param repository the value for the {@code repository} component
-     * @param mapper the value for the {@code mapper} component
-     */
-    public ExerciseService(final ExerciseRepository repository,
-                           final ExerciseMapper mapper) {
-        this.repository = repository;
-        this.mapper = mapper;
-    }
 
     /**
      * Creates a new exercise.

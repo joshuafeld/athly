@@ -6,6 +6,7 @@ import com.joshuafeld.athly.workout.dto.ExerciseDto;
 import com.joshuafeld.athly.workout.dto.ExercisePutDto;
 import com.joshuafeld.athly.workout.service.ExerciseService;
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -23,18 +24,10 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/exercises")
+@AllArgsConstructor
 public class ExerciseController {
 
     private final ExerciseService service;
-
-    /**
-     * Creates an instance of an {@code ExerciseController} class.
-     *
-     * @param service the value for the {@code service} component
-     */
-    public ExerciseController(final ExerciseService service) {
-        this.service = service;
-    }
 
     /**
      * Creates a new exercise.

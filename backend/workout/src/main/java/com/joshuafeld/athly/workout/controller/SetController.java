@@ -6,6 +6,7 @@ import com.joshuafeld.athly.workout.dto.SetPostDto;
 import com.joshuafeld.athly.workout.dto.SetPutDto;
 import com.joshuafeld.athly.workout.service.SetService;
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -23,18 +24,10 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/workouts/{workout}/segments/{segment}/sets")
+@AllArgsConstructor
 public class SetController {
 
     private final SetService service;
-
-    /**
-     * Creates an instance of a {@code SetController} class.
-     *
-     * @param service the value for the {@code service} component
-     */
-    public SetController(final SetService service) {
-        this.service = service;
-    }
 
     /**
      * Creates a new set.

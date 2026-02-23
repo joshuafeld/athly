@@ -6,6 +6,7 @@ import com.joshuafeld.athly.workout.dto.SegmentPatchDto;
 import com.joshuafeld.athly.workout.dto.SegmentPutDto;
 import com.joshuafeld.athly.workout.service.SegmentService;
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -23,18 +24,10 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/workouts/{workout}/segments")
+@AllArgsConstructor
 public class SegmentController {
 
     private final SegmentService service;
-
-    /**
-     * Creates an instance of a {@code SegmentController} class.
-     *
-     * @param service the value for the {@code service} component
-     */
-    public SegmentController(final SegmentService service) {
-        this.service = service;
-    }
 
     /**
      * Creates a new segment.

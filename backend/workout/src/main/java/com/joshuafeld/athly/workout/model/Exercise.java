@@ -58,13 +58,4 @@ public class Exercise {
         this.muscle = muscle;
         this.creator = creator;
     }
-
-    /**
-     * Returns the value of the {@code id} component.
-     *
-     * @return the value of the {@code id} component
-     */
-    public Long id() {
-        return id;
-    }
 }

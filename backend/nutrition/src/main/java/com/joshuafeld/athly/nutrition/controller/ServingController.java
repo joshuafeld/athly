@@ -6,6 +6,7 @@ import com.joshuafeld.athly.nutrition.dto.ServingPostDto;
 import com.joshuafeld.athly.nutrition.dto.ServingPutDto;
 import com.joshuafeld.athly.nutrition.service.ServingService;
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -23,18 +24,10 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/foods/{food}/servings")
+@AllArgsConstructor
 public class ServingController {
 
     private final ServingService service;
-
-    /**
-     * Creates an instance of a {@code ServingController} class.
-     *
-     * @param service the value for the {@code service} component
-     */
-    public ServingController(final ServingService service) {
-        this.service = service;
-    }
 
     /**
      * Creates a new serving.

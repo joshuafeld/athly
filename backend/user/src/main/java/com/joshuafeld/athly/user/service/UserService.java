@@ -6,6 +6,7 @@ import com.joshuafeld.athly.user.dto.UserPutDto;
 import com.joshuafeld.athly.user.mapper.UserMapper;
 import com.joshuafeld.athly.user.model.User;
 import com.joshuafeld.athly.user.repository.UserRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,23 +17,11 @@ import java.util.Optional;
  * A user service.
  */
 @Service
+@AllArgsConstructor
 public class UserService {
 
     private final UserRepository repository;
-
     private final UserMapper mapper;
-
-    /**
-     * Creates an instance of a {@code UserService} class.
-     *
-     * @param repository the value for the {@code repository} component
-     * @param mapper the value for the {@code mapper} component
-     */
-    public UserService(final UserRepository repository,
-                       final UserMapper mapper) {
-        this.repository = repository;
-        this.mapper = mapper;
-    }
 
     /**
      * Returns the data of all users.

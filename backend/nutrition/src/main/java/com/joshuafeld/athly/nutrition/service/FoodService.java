@@ -9,6 +9,7 @@ import com.joshuafeld.athly.nutrition.model.Food;
 import com.joshuafeld.athly.nutrition.model.Nutrient;
 import com.joshuafeld.athly.nutrition.model.Serving;
 import com.joshuafeld.athly.nutrition.repository.FoodRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,23 +22,11 @@ import java.util.Optional;
  * A food service.
  */
 @Service
+@AllArgsConstructor
 public class FoodService {
 
     private final FoodRepository repository;
-
     private final FoodMapper mapper;
-
-    /**
-     * Creates an instance of a {@code FoodService} class.
-     *
-     * @param repository the value for the {@code repository} component
-     * @param mapper the value for the {@code mapper} component
-     */
-    public FoodService(final FoodRepository repository,
-                       final FoodMapper mapper) {
-        this.repository = repository;
-        this.mapper = mapper;
-    }
 
     /**
      * Creates a new food.

@@ -2,6 +2,7 @@ package com.joshuafeld.athly.workout.controller;
 
 import com.joshuafeld.athly.workout.dto.WorkoutDto;
 import com.joshuafeld.athly.workout.service.WorkoutService;
+import lombok.AllArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -19,18 +20,10 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/workouts")
+@AllArgsConstructor
 public class WorkoutController {
 
     private final WorkoutService service;
-
-    /**
-     * Creates an instance of an {@code WorkoutController} class.
-     *
-     * @param service the value for the {@code service} component
-     */
-    public WorkoutController(final WorkoutService service) {
-        this.service = service;
-    }
 
     /**
      * Creates a new workout.

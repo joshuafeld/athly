@@ -6,6 +6,7 @@ import com.joshuafeld.athly.nutrition.dto.NutrientPostDto;
 import com.joshuafeld.athly.nutrition.dto.NutrientPutDto;
 import com.joshuafeld.athly.nutrition.service.NutrientService;
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -23,18 +24,10 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/foods/{food}/nutrients")
+@AllArgsConstructor
 public class NutrientController {
 
     private final NutrientService service;
-
-    /**
-     * Creates an instance of a {@code NutrientController} class.
-     *
-     * @param service the value for the {@code service} component
-     */
-    public NutrientController(final NutrientService service) {
-        this.service = service;
-    }
 
     /**
      * Creates a new nutrient.

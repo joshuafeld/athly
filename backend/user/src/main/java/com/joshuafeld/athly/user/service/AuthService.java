@@ -75,6 +75,12 @@ public class AuthService {
         )));
     }
 
+    /**
+     * Refreshes an access token.
+     *
+     * @param dto the data for the refresh
+     * @return the data of the token
+     */
     @Transactional
     public RefreshDto refresh(final RefreshPostDto dto) {
         final RefreshToken token = refreshTokenRepository
@@ -92,6 +98,11 @@ public class AuthService {
                 jwtProperties.ttl());
     }
 
+    /**
+     * Logs a user out.
+     *
+     * @param dto the data for the logout
+     */
     @Transactional
     public void logout(final LogoutPostDto dto) {
         refreshTokenRepository.findByToken(dto.refreshToken())

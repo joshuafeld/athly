@@ -10,6 +10,7 @@ import com.joshuafeld.athly.workout.model.Set;
 import com.joshuafeld.athly.workout.repository.ExerciseRepository;
 import com.joshuafeld.athly.workout.repository.SegmentRepository;
 import com.joshuafeld.athly.workout.repository.WorkoutRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,33 +23,13 @@ import java.util.Optional;
  * A segment service.
  */
 @Service
+@AllArgsConstructor
 public class SegmentService {
 
     private final SegmentRepository repository;
     private final ExerciseRepository exerciseRepository;
     private final WorkoutRepository workoutRepository;
-
     private final SegmentMapper mapper;
-
-    /**
-     * Creates an instance of an {@code SegmentService} class.
-     *
-     * @param repository the value for the {@code repository} component
-     * @param exerciseRepository the value for the {@code exerciseRepository}
-     *                           component
-     * @param workoutRepository the value for the {@code workoutRepository}
-     *                          component
-     * @param mapper the value for the {@code mapper} component
-     */
-    public SegmentService(final SegmentRepository repository,
-                          final ExerciseRepository exerciseRepository,
-                          final WorkoutRepository workoutRepository,
-                          final SegmentMapper mapper) {
-        this.repository = repository;
-        this.exerciseRepository = exerciseRepository;
-        this.workoutRepository = workoutRepository;
-        this.mapper = mapper;
-    }
 
     /**
      * Creates a new segment.

@@ -8,6 +8,7 @@ import com.joshuafeld.athly.workout.mapper.SetMapper;
 import com.joshuafeld.athly.workout.model.Set;
 import com.joshuafeld.athly.workout.repository.SegmentRepository;
 import com.joshuafeld.athly.workout.repository.SetRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,28 +19,12 @@ import java.util.Optional;
  * A set service.
  */
 @Service
+@AllArgsConstructor
 public class SetService {
 
     private final SetRepository repository;
     private final SegmentRepository segmentRepository;
-
     private final SetMapper mapper;
-
-    /**
-     * Creates an instance of an {@code SetService} class.
-     *
-     * @param repository the value for the {@code repository} component
-     * @param segmentRepository the value for the {@code segmentRepository}
-     *                          component
-     * @param mapper the value for the {@code mapper} component
-     */
-    public SetService(final SetRepository repository,
-                      final SegmentRepository segmentRepository,
-                      final SetMapper mapper) {
-        this.repository = repository;
-        this.segmentRepository = segmentRepository;
-        this.mapper = mapper;
-    }
 
     /**
      * Creates a new set.

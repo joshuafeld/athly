@@ -8,6 +8,7 @@ import com.joshuafeld.athly.nutrition.mapper.NutrientMapper;
 import com.joshuafeld.athly.nutrition.model.Nutrient;
 import com.joshuafeld.athly.nutrition.repository.FoodRepository;
 import com.joshuafeld.athly.nutrition.repository.NutrientRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,27 +19,12 @@ import java.util.Optional;
  * A nutrient service.
  */
 @Service
+@AllArgsConstructor
 public class NutrientService {
 
     private final NutrientRepository repository;
     private final FoodRepository foodRepository;
-
     private final NutrientMapper mapper;
-
-    /**
-     * Creates an instance of an {@code NutrientService} class.
-     *
-     * @param repository the value for the {@code repository} component
-     * @param foodRepository the value for the {@code foodRepository} component
-     * @param mapper the value for the {@code mapper} component
-     */
-    public NutrientService(final NutrientRepository repository,
-                           final FoodRepository foodRepository,
-                           final NutrientMapper mapper) {
-        this.repository = repository;
-        this.foodRepository = foodRepository;
-        this.mapper = mapper;
-    }
 
     /**
      * Creates a new nutrient.
