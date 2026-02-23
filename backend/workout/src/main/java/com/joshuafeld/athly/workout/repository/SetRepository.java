@@ -1,9 +1,11 @@
 package com.joshuafeld.athly.workout.repository;
 
-import com.joshuafeld.athly.workout.exception.ExerciseNotFoundException;
 import com.joshuafeld.athly.workout.exception.SetNotFoundException;
 import com.joshuafeld.athly.workout.model.Set;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -37,4 +39,12 @@ public interface SetRepository extends JpaRepository<Set, Long> {
     default Set requireById(final Long id) {
         return findById(id).orElseThrow(() -> new SetNotFoundException(id));
     }
+
+    @Query("""
+        SELECT s FROM Set s
+        JOIN s.segment seg
+        WHERE seg.exercise.id =: exercise
+        ORDER BY (s.weight * s.reps) DESC, s.id DESC
+    """)
+    List<Set> topVolume(@Param("exercise") Long exercise, Pageable pageable);
 }

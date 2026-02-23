@@ -1,5 +1,6 @@
 package com.joshuafeld.athly.user.service;
 
+import com.joshuafeld.athly.user.model.Role;
 import com.joshuafeld.athly.user.security.JwtProperties;
 import com.joshuafeld.athly.user.dto.*;
 import com.joshuafeld.athly.user.mapper.UserMapper;
@@ -13,6 +14,8 @@ import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * An authentication service.
@@ -64,6 +67,8 @@ public class AuthService {
                 JwtClaimsSet.builder()
                         .subject(String.valueOf(user.id()))
                         .expiresAt(Instant.now().plusSeconds(jwtProperties.ttl()))
+                        .claim("roles", user.roles().stream().map(Role::name)
+                                .collect(Collectors.toSet()))
                         .build()
         )).getTokenValue(), "Bearer", jwtProperties.ttl());
     }
@@ -82,6 +87,7 @@ public class AuthService {
                 dto.username(),
                 dto.email(),
                 passwordEncoder.encode(dto.password()),
+                Set.of(Role.USER),
                 dto.firstName(),
                 dto.lastName()
         )));

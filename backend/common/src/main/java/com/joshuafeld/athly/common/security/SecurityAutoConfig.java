@@ -8,6 +8,8 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
+import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
 
 /**
@@ -26,8 +28,11 @@ public class SecurityAutoConfig {
      * @return the configured security filter chain
      */
     @Bean
-    public SecurityFilterChain defaultFilterChain(final HttpSecurity http,
-                                           final JwtDecoder jwtDecoder) {
+    public SecurityFilterChain defaultFilterChain(
+            final HttpSecurity http,
+            final JwtDecoder jwtDecoder,
+            final JwtAuthenticationConverter jwtAuthenticationConverter
+    ) {
         return http
                 .securityMatcher("/**")
                 .csrf(AbstractHttpConfigurer::disable)
@@ -35,10 +40,21 @@ public class SecurityAutoConfig {
                         .requestMatchers("/actuator/**").permitAll()
                         .anyRequest().authenticated()
                 )
-                .oauth2ResourceServer(oauth2 -> oauth2.jwt(
-                        jwt -> jwt.decoder(jwtDecoder)
+                .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt
+                        .decoder(jwtDecoder)
+                        .jwtAuthenticationConverter(jwtAuthenticationConverter)
                 ))
                 .build();
+    }
+
+    @Bean
+    public JwtAuthenticationConverter jwtAuthenticationConverter() {
+        var authorities = new JwtGrantedAuthoritiesConverter();
+        authorities.setAuthoritiesClaimName("roles");
+        authorities.setAuthorityPrefix("ROLE_");
+        var converter = new JwtAuthenticationConverter();
+        converter.setJwtGrantedAuthoritiesConverter(authorities);
+        return converter;
     }
 
     /**
