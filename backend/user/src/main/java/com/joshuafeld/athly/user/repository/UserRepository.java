@@ -14,7 +14,7 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<User, Long> {
 
     /**
-     * Retrieves a user by its username or email.
+     * Retrieves a user by its username.
      *
      * @param username must not be {@code null}
      * @return the user with the given username or {@code Optional#empty()}

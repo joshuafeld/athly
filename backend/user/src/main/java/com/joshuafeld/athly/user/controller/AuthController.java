@@ -3,6 +3,7 @@ package com.joshuafeld.athly.user.controller;
 import com.joshuafeld.athly.user.dto.*;
 import com.joshuafeld.athly.user.service.AuthService;
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,18 +14,10 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/auth")
+@AllArgsConstructor
 public class AuthController {
 
     private final AuthService service;
-
-    /**
-     * Creates an instance of an {@code AuthController} class.
-     *
-     * @param service the value for the {@code service} component
-     */
-    public AuthController(final AuthService service) {
-        this.service = service;
-    }
 
     /**
      * Logs a user in.
@@ -46,5 +39,26 @@ public class AuthController {
     @PostMapping("/register")
     public UserDto post(@RequestBody @Valid final RegisterPostDto dto) {
         return service.register(dto);
+    }
+
+    /**
+     * Refreshes the token.
+     *
+     * @param dto the data for the refresh
+     * @return the data of the token
+     */
+    @PostMapping("/refresh")
+    public RefreshDto refresh(@RequestBody @Valid final RefreshPostDto dto) {
+        return service.refresh(dto);
+    }
+
+    /**
+     * Logs a user out.
+     *
+     * @param dto the data for the logout
+     */
+    @PostMapping("/logout")
+    public void logout(@RequestBody @Valid final LogoutPostDto dto) {
+        service.logout(dto);
     }
 }
