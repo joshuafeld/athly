@@ -11,6 +11,20 @@ x-db-env: &db-env
   DB_USERNAME: athly
   DB_PASSWORD: athly
 
+x-spring-healthcheck: &spring-healthcheck
+  test: ["CMD-SHELL", "curl --fail --silent http://localhost:4321/actuator/health | grep UP || exit 1"]
+  interval: 5s
+  timeout: 5s
+  retries: 10
+
+x-depends-on: &depends-on
+  postgres:
+    condition: service_healthy
+  discovery-service:
+    condition: service_healthy
+  config-service:
+    condition: service_healthy
+
 services:
   postgres:
     image: postgres:18
@@ -32,16 +46,18 @@ services:
       context: ./discovery
     container_name: discovery-service
     restart: unless-stopped
+    healthcheck: *spring-healthcheck
 
   config-service:
     build:
       context: ./config
     container_name: config-service
     restart: unless-stopped
+    healthcheck: *spring-healthcheck
     depends_on:
-      - discovery-service
-    environment:
-      <<: *common-env
+      discovery-service:
+        condition: service_healthy
+    environment: *common-env
 
   gateway-service:
     build:
@@ -49,8 +65,10 @@ services:
     container_name: gateway-service
     restart: unless-stopped
     depends_on:
-      - discovery-service
-      - config-service
+      discovery-service:
+        condition: service_healthy
+      config-service:
+        condition: service_healthy
     ports:
       - "8080:8080"
     environment:
@@ -61,13 +79,7 @@ services:
       context: ./user
     container_name: user-service
     restart: unless-stopped
-    depends_on:
-      postgres:
-        condition: service_healthy
-      discovery-service:
-        condition: service_started
-      config-service:
-        condition: service_started
+    depends_on: *depends-on
     environment:
       <<: [*common-env, *jwt-env, *db-env]
       DB_NAME: athly_user
@@ -77,13 +89,7 @@ services:
       context: ./nutrition
     container_name: nutrition-service
     restart: unless-stopped
-    depends_on:
-      postgres:
-        condition: service_healthy
-      discovery-service:
-        condition: service_started
-      config-service:
-        condition: service_started
+    depends_on: *depends-on
     environment:
       <<: [*common-env, *jwt-env, *db-env]
       DB_NAME: athly_nutrition
@@ -93,13 +99,7 @@ services:
       context: ./workout
     container_name: workout-service
     restart: unless-stopped
-    depends_on:
-      postgres:
-        condition: service_healthy
-      discovery-service:
-        condition: service_started
-      config-service:
-        condition: service_started
+    depends_on: *depends-on
     environment:
       <<: [*common-env, *jwt-env, *db-env]
       DB_NAME: athly_workout

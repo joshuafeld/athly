@@ -1,7 +1,4 @@
-FROM amazoncorretto:25-jdk
-
-WORKDIR /app
-
-COPY target/athly-user-*.jar app.jar
-
-ENTRYPOINT ["java", "-jar", "app.jar"]
+FROM eclipse-temurin:25
+RUN mkdir /opt/app
+COPY target/athly-user-*.jar /opt/app/athly-user.jar
+CMD ["java", "-jar", "/opt/app/athly-user.jar"]

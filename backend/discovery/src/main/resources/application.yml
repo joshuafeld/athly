@@ -1,6 +1,10 @@
 server:
   port: 8761
 
+management:
+  server:
+    port: 4321
+
 spring:
   application:
     name: athly-discovery
