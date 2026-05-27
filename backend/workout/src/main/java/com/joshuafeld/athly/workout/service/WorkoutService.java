@@ -5,7 +5,7 @@ import com.joshuafeld.athly.workout.mapper.WorkoutMapper;
 import com.joshuafeld.athly.workout.model.Workout;
 import com.joshuafeld.athly.workout.repository.WorkoutRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,11 +37,24 @@ public class WorkoutService {
     /**
      * Returns the data of all workouts.
      *
-     * @param creator the creator of the workouts
+     * @param user the request user
      * @return a list of all workouts' data
      */
     @Transactional(readOnly = true)
-    public List<WorkoutDto> get(final Long creator) {
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public List<WorkoutDto> get(final Long user) {
+        return repository.findAll().stream().map(mapper::toDto).toList();
+    }
+
+    /**
+     * Returns the data of all workouts for the given creator.
+     *
+     * @param creator the creator of the workouts
+     * @return a list of all workouts' data for the given creator
+     */
+    @Transactional(readOnly = true)
+    @PreAuthorize("hasRole('ROLE_ADMIN') or #creator.equals(#user)")
+    public List<WorkoutDto> getByCreator(final Long creator, final Long user) {
         return repository.findAllByCreator(creator).stream().map(mapper::toDto)
                 .toList();
     }
@@ -50,27 +63,30 @@ public class WorkoutService {
      * Returns the data of the workout with the given id.
      *
      * @param id the id of the workout
-     * @param creator the creator of the workout
+     * @param user the request user
      * @return the data of the workout
      */
     @Transactional(readOnly = true)
-    public WorkoutDto get(final Long id, final Long creator) {
-        return mapper.toDto(repository.requireByIdAndCreator(id, creator));
+    @PreAuthorize("hasRole('ROLE_ADMIN') or @workoutService.isCreator(#id, #user)")
+    public WorkoutDto get(final Long id, final Long user) {
+        return mapper.toDto(repository.requireById(id));
     }
 
     /**
      * Deletes the data of the workout with the given id.
      *
      * @param id the id of the workout
+     * @param user the request user
      */
     @Transactional
-    public void delete(final Long id) {
+    @PreAuthorize("@workoutService.isCreator(#id, #user)")
+    public void delete(final Long id, final Long user) {
         repository.deleteById(id);
     }
 
-    public boolean isCreator(final Long id, final Jwt jwt) {
+    public boolean isCreator(final Long id, final Long user) {
         return repository.findById(id).map(workout ->
-                        workout.creator().equals(Long.valueOf(jwt.getSubject())))
+                        workout.creator().equals(user))
                 .orElse(false);
     }
 }

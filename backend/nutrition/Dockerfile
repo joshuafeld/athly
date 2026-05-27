@@ -1,0 +1,7 @@
+FROM amazoncorretto:25-jdk
+
+WORKDIR /app
+
+COPY target/athly-nutrition-*.jar app.jar
+
+ENTRYPOINT ["java", "-jar", "app.jar"]

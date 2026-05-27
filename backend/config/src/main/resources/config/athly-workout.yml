@@ -1,7 +1,7 @@
 eureka:
   client:
     service-url:
-      defaultZone: http://localhost:8761/eureka
+      defaultZone: http://${EUREKA_HOST}:8761/eureka
 
 security:
   jwt:
@@ -12,7 +12,7 @@ server:
 
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/athly_workout
+    url: jdbc:postgresql://${DB_HOST}:5432/${DB_NAME}
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver

@@ -11,6 +11,10 @@ import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.method.support.HandlerMethodArgumentResolver;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import java.util.List;
 
 /**
  * A security autoconfiguration.
@@ -18,7 +22,7 @@ import org.springframework.security.web.SecurityFilterChain;
 @AutoConfiguration
 @EnableMethodSecurity
 @EnableConfigurationProperties(JwtProperties.class)
-public class SecurityAutoConfig {
+public class SecurityAutoConfig implements WebMvcConfigurer {
 
     /**
      * Configures the default security filter chain.
@@ -47,6 +51,11 @@ public class SecurityAutoConfig {
                 .build();
     }
 
+    /**
+     * Configures the JWT authentication converter.
+     *
+     * @return the configured JWT authentication converter
+     */
     @Bean
     public JwtAuthenticationConverter jwtAuthenticationConverter() {
         var authorities = new JwtGrantedAuthoritiesConverter();
@@ -66,5 +75,15 @@ public class SecurityAutoConfig {
     @Bean
     public JwtDecoder jwtDecoder(final JwtProperties properties) {
         return NimbusJwtDecoder.withPublicKey(properties.publicKey()).build();
+    }
+
+    /**
+     * Adds a custom argument resolver.
+     *
+     * @param resolvers the list of argument resolvers
+     */
+    @Override
+    public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
+        resolvers.add(new UserPrincipalResolver());
     }
 }

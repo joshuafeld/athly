@@ -1,0 +1,115 @@
+x-common-env: &common-env
+  EUREKA_HOST: discovery-service
+  CONFIG_HOST: config-service
+
+x-jwt-env: &jwt-env
+  JWT_PUBLIC_KEY: ${JWT_PUBLIC_KEY}
+  JWT_PRIVATE_KEY: ${JWT_PRIVATE_KEY}
+
+x-db-env: &db-env
+  DB_HOST: postgres
+  DB_USERNAME: athly
+  DB_PASSWORD: athly
+
+services:
+  postgres:
+    image: postgres:18
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: athly
+      POSTGRES_PASSWORD: athly
+    volumes:
+      - postgres-data:/var/lib/postgresql
+      - ./create-dbs.sql:/docker-entrypoint-initdb.d/create-dbs.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U athly"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  discovery-service:
+    build:
+      context: ./discovery
+    container_name: discovery-service
+    restart: unless-stopped
+
+  config-service:
+    build:
+      context: ./config
+    container_name: config-service
+    restart: unless-stopped
+    depends_on:
+      - discovery-service
+    environment:
+      <<: *common-env
+
+  gateway-service:
+    build:
+      context: ./gateway
+    container_name: gateway-service
+    restart: unless-stopped
+    depends_on:
+      - discovery-service
+      - config-service
+    ports:
+      - "8080:8080"
+    environment:
+      <<: *common-env
+      <<: *jwt-env
+
+  user-service:
+    build:
+      context: ./user
+    container_name: user-service
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      discovery-service:
+        condition: service_started
+      config-service:
+        condition: service_started
+    environment:
+      <<: *common-env
+      <<: *jwt-env
+      <<: *db-env
+      DB_NAME: athly_user
+
+  nutrition-service:
+    build:
+      context: ./nutrition
+    container_name: nutrition-service
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      discovery-service:
+        condition: service_started
+      config-service:
+        condition: service_started
+    environment:
+      <<: *common-env
+      <<: *jwt-env
+      <<: *db-env
+      DB_NAME: athly_nutrition
+
+  workout-service:
+    build:
+      context: ./workout
+    container_name: workout-service
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      discovery-service:
+        condition: service_started
+      config-service:
+        condition: service_started
+    environment:
+      <<: *common-env
+      <<: *jwt-env
+      <<: *db-env
+      DB_NAME: athly_workout
+
+volumes:
+  postgres-data:
