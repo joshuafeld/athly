@@ -21,7 +21,7 @@ public class RefreshToken {
     private String token;
 
     @ManyToOne(optional = false)
-    @JoinColumn(name = "user")
+    @JoinColumn(name = "user_id")
     private User user;
 
     private Instant expiresAt;
