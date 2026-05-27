@@ -54,8 +54,7 @@ services:
     ports:
       - "8080:8080"
     environment:
-      <<: *common-env
-      <<: *jwt-env
+      <<: [*common-env, *jwt-env]
 
   user-service:
     build:
@@ -70,9 +69,7 @@ services:
       config-service:
         condition: service_started
     environment:
-      <<: *common-env
-      <<: *jwt-env
-      <<: *db-env
+      <<: [*common-env, *jwt-env, *db-env]
       DB_NAME: athly_user
 
   nutrition-service:
@@ -88,9 +85,7 @@ services:
       config-service:
         condition: service_started
     environment:
-      <<: *common-env
-      <<: *jwt-env
-      <<: *db-env
+      <<: [*common-env, *jwt-env, *db-env]
       DB_NAME: athly_nutrition
 
   workout-service:
@@ -106,9 +101,7 @@ services:
       config-service:
         condition: service_started
     environment:
-      <<: *common-env
-      <<: *jwt-env
-      <<: *db-env
+      <<: [*common-env, *jwt-env, *db-env]
       DB_NAME: athly_workout
 
 volumes:

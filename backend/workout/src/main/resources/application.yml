@@ -1,8 +1,5 @@
 spring:
   application:
     name: athly-workout
-  cloud:
-    config:
-      discovery:
-        enabled: true
-        service-id: athly-config
+  config:
+    import: configserver:http://${CONFIG_HOST}:8888/
