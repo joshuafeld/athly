@@ -44,14 +44,12 @@ services:
   discovery-service:
     build:
       context: ./discovery
-    container_name: discovery-service
     restart: unless-stopped
     healthcheck: *spring-healthcheck
 
   config-service:
     build:
       context: ./config
-    container_name: config-service
     restart: unless-stopped
     healthcheck: *spring-healthcheck
     depends_on:
@@ -62,7 +60,6 @@ services:
   gateway-service:
     build:
       context: ./gateway
-    container_name: gateway-service
     restart: unless-stopped
     depends_on:
       discovery-service:
@@ -77,7 +74,6 @@ services:
   user-service:
     build:
       context: ./user
-    container_name: user-service
     restart: unless-stopped
     depends_on: *depends-on
     environment:
@@ -87,7 +83,6 @@ services:
   nutrition-service:
     build:
       context: ./nutrition
-    container_name: nutrition-service
     restart: unless-stopped
     depends_on: *depends-on
     environment:
@@ -97,7 +92,6 @@ services:
   workout-service:
     build:
       context: ./workout
-    container_name: workout-service
     restart: unless-stopped
     depends_on: *depends-on
     environment:
