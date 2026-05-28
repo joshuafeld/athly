@@ -10,7 +10,6 @@ management:
   server:
     port: 4321
 
-
 spring:
   application:
     name: athly-config

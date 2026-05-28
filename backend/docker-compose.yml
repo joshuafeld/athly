@@ -27,7 +27,7 @@ x-depends-on: &depends-on
 
 services:
   postgres:
-    image: postgres:18
+    image: postgres:18-alpine
     restart: unless-stopped
     environment:
       POSTGRES_USER: athly
@@ -44,12 +44,14 @@ services:
   discovery-service:
     build:
       context: ./discovery
+      dockerfile: ../Dockerfile
     restart: unless-stopped
     healthcheck: *spring-healthcheck
 
   config-service:
     build:
       context: ./config
+      dockerfile: ../Dockerfile
     restart: unless-stopped
     healthcheck: *spring-healthcheck
     depends_on:
@@ -60,6 +62,7 @@ services:
   gateway-service:
     build:
       context: ./gateway
+      dockerfile: ../Dockerfile
     restart: unless-stopped
     depends_on:
       discovery-service:
@@ -74,6 +77,7 @@ services:
   user-service:
     build:
       context: ./user
+      dockerfile: ../Dockerfile
     restart: unless-stopped
     depends_on: *depends-on
     environment:
@@ -83,6 +87,7 @@ services:
   nutrition-service:
     build:
       context: ./nutrition
+      dockerfile: ../Dockerfile
     restart: unless-stopped
     depends_on: *depends-on
     environment:
@@ -92,6 +97,7 @@ services:
   workout-service:
     build:
       context: ./workout
+      dockerfile: ../Dockerfile
     restart: unless-stopped
     depends_on: *depends-on
     environment:
