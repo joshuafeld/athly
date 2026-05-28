@@ -1,5 +1,5 @@
 spring:
   application:
-    name: athly-user
+    name: user
   config:
-    import: configserver:http://${CONFIG_HOST}:8888/
+    import: ${CONFIGS_URL}

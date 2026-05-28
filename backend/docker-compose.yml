@@ -1,108 +1,135 @@
-x-common-env: &common-env
-  EUREKA_HOST: discovery-service
-  CONFIG_HOST: config-service
+x-dependson-discovery: &dependson-discovery
+  discovery:
+    condition: service_healthy
 
-x-jwt-env: &jwt-env
-  JWT_PUBLIC_KEY: ${JWT_PUBLIC_KEY}
-  JWT_PRIVATE_KEY: ${JWT_PRIVATE_KEY}
+x-dependson-configs: &dependson-configs
+  configs:
+    condition: service_healthy
 
-x-db-env: &db-env
-  DB_HOST: postgres
-  DB_USERNAME: athly
-  DB_PASSWORD: athly
+x-service_dependson: &service_dependson
+  <<: [*dependson-discovery, *dependson-configs]
+  postgres:
+    condition: service_healthy
 
-x-spring-healthcheck: &spring-healthcheck
+x-spring_dockerfile: &spring_dockerfile
+  dockerfile: ../Dockerfile
+
+x-spring_healthcheck: &spring_healthcheck
   test: ["CMD-SHELL", "curl --fail --silent http://localhost:4321/actuator/health | grep UP || exit 1"]
   interval: 5s
   timeout: 5s
   retries: 10
 
-x-depends-on: &depends-on
-  postgres:
-    condition: service_healthy
-  discovery-service:
-    condition: service_healthy
-  config-service:
-    condition: service_healthy
+x-environment-platform: &environment-platform
+  DISCOVERY_URL: http://discovery:8761/eureka
+  CONFIGS_URL: configserver:http://configs:8888/
+
+x-environment-jwt: &environment-jwt
+  JWT_PUBLIC_KEY: ${JWT_PUBLIC_KEY}
+  JWT_PRIVATE_KEY: ${JWT_PRIVATE_KEY}
+
+x-environment-postgres: &environment-postgres
+  DB_URL: jdbc:postgresql://postgres:5432
+  DB_USERNAME: ${USERNAME}
+  DB_PASSWORD: ${PASSWORD}
+  DB_DRIVER: org.postgresql.Driver
+
+x-service_environment: &service_environment
+  <<: [*environment-platform, *environment-jwt, *environment-postgres]
 
 services:
+  prometheus:
+    image: prom/prometheus
+    volumes:
+      - prometheus-data:/prometheus
+      - ./.infra/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+
+  grafana:
+    image: grafana/grafana
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./.infra/grafana/provisioning:/etc/grafana/provisioning
+      - ./.infra/grafana/dashboards:/var/lib/grafana/dashboards
+    ports:
+      - "3000:3000"
+    environment:
+      GF_SECURITY_ADMIN_USER: ${USERNAME}
+      GF_SECURITY_ADMIN_PASSWORD: ${PASSWORD}
+
   postgres:
-    image: postgres:18-alpine
+    image: postgres:alpine
     restart: unless-stopped
     environment:
-      POSTGRES_USER: athly
-      POSTGRES_PASSWORD: athly
+      POSTGRES_USER: ${USERNAME}
+      POSTGRES_PASSWORD: ${PASSWORD}
     volumes:
       - postgres-data:/var/lib/postgresql
-      - ./create-dbs.sql:/docker-entrypoint-initdb.d/create-dbs.sql
+      - ./.infra/postgres/create-dbs.sql:/docker-entrypoint-initdb.d/create-dbs.sql
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U athly"]
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER"]
       interval: 5s
       timeout: 5s
       retries: 5
 
-  discovery-service:
+  discovery:
     build:
       context: ./discovery
-      dockerfile: ../Dockerfile
+      <<: *spring_dockerfile
     restart: unless-stopped
-    healthcheck: *spring-healthcheck
+    healthcheck: *spring_healthcheck
 
-  config-service:
+  configs:
     build:
       context: ./config
-      dockerfile: ../Dockerfile
+      <<: *spring_dockerfile
     restart: unless-stopped
-    healthcheck: *spring-healthcheck
-    depends_on:
-      discovery-service:
-        condition: service_healthy
-    environment: *common-env
+    healthcheck: *spring_healthcheck
+    depends_on: *dependson-discovery
+    environment: *environment-platform
 
-  gateway-service:
+  gateway:
     build:
       context: ./gateway
-      dockerfile: ../Dockerfile
+      <<: *spring_dockerfile
     restart: unless-stopped
     depends_on:
-      discovery-service:
-        condition: service_healthy
-      config-service:
-        condition: service_healthy
+      <<: [*dependson-discovery, *dependson-configs]
     ports:
       - "8080:8080"
     environment:
-      <<: [*common-env, *jwt-env]
+      <<: [*environment-platform, *environment-jwt]
 
-  user-service:
+  user:
     build:
       context: ./user
-      dockerfile: ../Dockerfile
+      <<: *spring_dockerfile
     restart: unless-stopped
-    depends_on: *depends-on
+    depends_on: *service_dependson
     environment:
-      <<: [*common-env, *jwt-env, *db-env]
-      DB_NAME: athly_user
+      <<: *service_environment
+      DB_NAME: users
 
-  nutrition-service:
+  nutrition:
     build:
       context: ./nutrition
-      dockerfile: ../Dockerfile
+      <<: *spring_dockerfile
     restart: unless-stopped
-    depends_on: *depends-on
+    depends_on: *service_dependson
     environment:
-      <<: [*common-env, *jwt-env, *db-env]
-      DB_NAME: athly_nutrition
+      <<: *service_environment
+      DB_NAME: nutrition
 
-  workout-service:
+  workout:
     build:
       context: ./workout
-      dockerfile: ../Dockerfile
+      <<: *spring_dockerfile
     restart: unless-stopped
-    depends_on: *depends-on
+    depends_on: *service_dependson
     environment:
-      <<: [*common-env, *jwt-env, *db-env]
-      DB_NAME: athly_workout
+      <<: *service_environment
+      DB_NAME: workouts
 
 volumes:
+  prometheus-data:
+  grafana-data:
   postgres-data:

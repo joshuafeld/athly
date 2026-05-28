@@ -1,0 +1,16 @@
+eureka:
+  client:
+    service-url:
+      defaultZone: ${DISCOVERY_URL}
+
+security:
+  jwt:
+    public-key-pem: ${JWT_PUBLIC_KEY}
+
+management:
+  server:
+    port: 4321
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus

@@ -1,7 +1,7 @@
 eureka:
   client:
     service-url:
-      defaultZone: http://${EUREKA_HOST}:8761/eureka
+      defaultZone: ${DISCOVERY_URL}
 
 server:
   port: 8888
@@ -9,10 +9,14 @@ server:
 management:
   server:
     port: 4321
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
 
 spring:
   application:
-    name: athly-config
+    name: configs
   cloud:
     config:
       server:

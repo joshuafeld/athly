@@ -4,10 +4,14 @@ server:
 management:
   server:
     port: 4321
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
 
 spring:
   application:
-    name: athly-discovery
+    name: discovery
 
 eureka:
   client:

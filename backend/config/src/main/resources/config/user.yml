@@ -1,14 +1,10 @@
-eureka:
-  client:
-    service-url:
-      defaultZone: http://${EUREKA_HOST}:8761/eureka
-
 security:
   jwt:
-    public-key-pem: ${JWT_PUBLIC_KEY}
+    ttl: 3600
+    private-key-pem: ${JWT_PRIVATE_KEY}
 
 server:
-  port: 8082
+  port: 8081
 
 spring:
   datasource:
@@ -20,4 +16,3 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
-    database-platform: org.hibernate.dialect.PostgreSQLDialect

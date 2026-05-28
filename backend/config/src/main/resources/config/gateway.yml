@@ -1,12 +1,3 @@
-eureka:
-  client:
-    service-url:
-      defaultZone: http://${EUREKA_HOST}:8761/eureka
-
-security:
-  jwt:
-    public-key-pem: ${JWT_PUBLIC_KEY}
-
 server:
   port: 8080
 
@@ -16,20 +7,20 @@ spring:
       server:
         webmvc:
           routes:
-            - id: athly-user
-              uri: lb://athly-user
+            - id: users
+              uri: lb://users
               predicates:
                 - Path=/user-management/**
               filters:
                 - StripPrefix=1
-            - id: athly-workout
-              uri: lb://athly-workout
+            - id: workouts
+              uri: lb://workouts
               predicates:
                 - Path=/workout-management/**
               filters:
                 - StripPrefix=1
-            - id: athly-nutrition
-              uri: lb://athly-nutrition
+            - id: nutrition
+              uri: lb://nutrition
               predicates:
                 - Path=/nutrition-management/**
               filters:
