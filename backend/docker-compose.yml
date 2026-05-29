@@ -43,6 +43,8 @@ services:
     volumes:
       - prometheus-data:/prometheus
       - ./.infra/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
 
   grafana:
     image: grafana/grafana
@@ -92,6 +94,7 @@ services:
       context: ./gateway
       <<: *spring_dockerfile
     restart: unless-stopped
+    healthcheck: *spring_healthcheck
     depends_on:
       <<: [*dependson-discovery, *dependson-configs]
     ports:
@@ -104,6 +107,7 @@ services:
       context: ./user
       <<: *spring_dockerfile
     restart: unless-stopped
+    healthcheck: *spring_healthcheck
     depends_on: *service_dependson
     environment:
       <<: *service_environment
@@ -114,6 +118,7 @@ services:
       context: ./nutrition
       <<: *spring_dockerfile
     restart: unless-stopped
+    healthcheck: *spring_healthcheck
     depends_on: *service_dependson
     environment:
       <<: *service_environment
@@ -124,6 +129,7 @@ services:
       context: ./workout
       <<: *spring_dockerfile
     restart: unless-stopped
+    healthcheck: *spring_healthcheck
     depends_on: *service_dependson
     environment:
       <<: *service_environment
