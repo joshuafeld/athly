@@ -2,6 +2,7 @@ package com.joshuafeld.athly.workout.service;
 
 import com.joshuafeld.athly.workout.command.*;
 import com.joshuafeld.athly.workout.exception.ExerciseAccessDeniedException;
+import com.joshuafeld.athly.workout.exception.ExerciseNotFoundException;
 import com.joshuafeld.athly.workout.model.Exercise;
 import com.joshuafeld.athly.workout.repository.ExerciseRepository;
 import lombok.AllArgsConstructor;
@@ -39,7 +40,7 @@ public class ExerciseService {
     /**
      * Returns all exercises.
      *
-     * @param command the get-all command
+     * @param command the get command
      * @return a list of all exercises
      */
     @Transactional(readOnly = true)
@@ -50,7 +51,7 @@ public class ExerciseService {
     /**
      * Returns the exercise with the given id.
      *
-     * @param command the get-by-id command
+     * @param command the get command
      * @return the exercise
      */
     @Transactional(readOnly = true)
@@ -99,7 +100,8 @@ public class ExerciseService {
     }
 
     private Exercise requireOwner(final Long id, final Long owner) {
-        final Exercise exercise = repository.requireById(id);
+        final Exercise exercise = repository.findById(id)
+                .orElseThrow(() -> new ExerciseNotFoundException(id));
         if (!exercise.owner().equals(owner)) {
             throw new ExerciseAccessDeniedException(id);
         }
