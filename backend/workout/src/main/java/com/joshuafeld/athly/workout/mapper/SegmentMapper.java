@@ -25,7 +25,8 @@ public class SegmentMapper implements Mapper<Segment, SegmentDto> {
                 segment.workout().id(),
                 segment.exercise().id(),
                 segment.sets().stream().map(Set::id).toList(),
-                segment.rest()
+                segment.rest(),
+                segment.notes()
         );
     }
 }

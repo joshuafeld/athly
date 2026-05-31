@@ -23,7 +23,9 @@ public class WorkoutMapper implements Mapper<Workout, WorkoutDto> {
         return new WorkoutDto(
                 workout.id(),
                 workout.creator(),
-                workout.segments().stream().map(Segment::id).toList()
+                workout.segments().stream().map(Segment::id).toList(),
+                workout.name(),
+                workout.notes()
         );
     }
 }

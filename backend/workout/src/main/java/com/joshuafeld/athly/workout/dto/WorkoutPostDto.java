@@ -1,10 +1,12 @@
 package com.joshuafeld.athly.workout.dto;
 
-import jakarta.validation.constraints.NotNull;
-
 /**
  * A data transfer object for a workout post request.
  *
- * @param creator the value of the {@code creator} component
+ * @param name the value of the {@code name} component
+ * @param notes the value of the {@code notes} component
  */
-public record WorkoutPostDto(@NotNull Long creator) { }
+public record WorkoutPostDto(
+        String name,
+        String notes
+) { }

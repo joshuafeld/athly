@@ -1,14 +1,6 @@
 package com.joshuafeld.athly.workout.model;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -48,6 +40,8 @@ public class Segment {
 
     private Integer rest;
 
+    private String notes;
+
     /**
      * Creates an instance of a {@code Segment} class.
      *
@@ -55,14 +49,19 @@ public class Segment {
      * @param exercise the value for the {@code exercise} component
      * @param sets the value for the {@code sets} component
      * @param rest the value for the {@code rest} component
+     * @param notes the value for the {@code notes} component
      */
-    public Segment(final Workout workout,
-                   final Exercise exercise,
-                   final List<Set> sets,
-                   final Integer rest) {
+    public Segment(
+            final Workout workout,
+            final Exercise exercise,
+            final List<Set> sets,
+            final Integer rest,
+            final String notes
+    ) {
         this.workout = workout;
         this.exercise = exercise;
         this.sets = sets;
         this.rest = rest;
+        this.notes = notes;
     }
 }

@@ -6,7 +6,6 @@ import com.joshuafeld.athly.workout.dto.SegmentPatchDto;
 import com.joshuafeld.athly.workout.dto.SegmentPutDto;
 import com.joshuafeld.athly.workout.mapper.SegmentMapper;
 import com.joshuafeld.athly.workout.model.Segment;
-import com.joshuafeld.athly.workout.model.Set;
 import com.joshuafeld.athly.workout.repository.ExerciseRepository;
 import com.joshuafeld.athly.workout.repository.SegmentRepository;
 import com.joshuafeld.athly.workout.repository.WorkoutRepository;
@@ -14,10 +13,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * A segment service.
@@ -44,7 +40,8 @@ public class SegmentService {
                 workoutRepository.requireById(workout),
                 exerciseRepository.requireById(dto.exercise()),
                 Collections.emptyList(),
-                dto.rest()
+                dto.rest(),
+                dto.notes()
         )));
     }
 
@@ -84,6 +81,7 @@ public class SegmentService {
         Optional.ofNullable(dto.exercise()).ifPresent(exercise ->
                 segment.exercise(exerciseRepository.requireById(exercise)));
         Optional.ofNullable(dto.rest()).ifPresent(segment::rest);
+        Optional.ofNullable(dto.notes()).ifPresent(segment::notes);
         return mapper.toDto(repository.save(segment));
     }
 
@@ -99,6 +97,7 @@ public class SegmentService {
         Segment segment = repository.requireById(id);
         segment.exercise(exerciseRepository.requireById(dto.exercise()));
         segment.rest(dto.rest());
+        segment.notes(dto.notes());
         return mapper.toDto(repository.save(segment));
     }
 

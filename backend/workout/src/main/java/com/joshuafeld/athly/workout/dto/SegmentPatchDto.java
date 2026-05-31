@@ -5,5 +5,10 @@ package com.joshuafeld.athly.workout.dto;
  *
  * @param exercise the value for the {@code exercise} component
  * @param rest the value for the {@code rest} component
+ * @param notes the value for the {@code notes} component
  */
-public record SegmentPatchDto(Long exercise, Integer rest) { }
+public record SegmentPatchDto(
+        Long exercise,
+        Integer rest,
+        String notes
+) { }

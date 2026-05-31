@@ -8,9 +8,11 @@ import jakarta.validation.constraints.NotNull;
  * @param workout the value for the {@code workout} component
  * @param exercise the value for the {@code exercise} component
  * @param rest the value for the {@code rest} component
+ * @param notes the value for the {@code notes} component
  */
 public record SegmentPostDto(
         @NotNull Long workout,
         @NotNull Long exercise,
-        Integer rest
+        Integer rest,
+        String notes
 ) { }

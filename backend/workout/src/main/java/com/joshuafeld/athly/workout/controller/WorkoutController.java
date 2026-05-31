@@ -1,12 +1,11 @@
 package com.joshuafeld.athly.workout.controller;
 
 import com.joshuafeld.athly.common.security.UserPrincipal;
-import com.joshuafeld.athly.workout.dto.WorkoutDto;
+import com.joshuafeld.athly.workout.dto.*;
 import com.joshuafeld.athly.workout.service.WorkoutService;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -28,8 +27,11 @@ public class WorkoutController {
      * @return the data of the workout
      */
     @PostMapping
-    public WorkoutDto post(@AuthenticationPrincipal final UserPrincipal principal) {
-        return service.post(principal.id());
+    public WorkoutDto post(
+            @RequestBody @Valid final WorkoutPostDto dto,
+            @AuthenticationPrincipal final UserPrincipal principal
+    ) {
+        return service.post(dto, principal.id());
     }
 
     /**
@@ -39,9 +41,11 @@ public class WorkoutController {
      * @return a list of all workouts' data
      */
     @GetMapping
-    public List<WorkoutDto> get(@RequestParam(required = false) final Boolean all,
-                                @RequestParam(required = false) final Long user,
-                                @AuthenticationPrincipal final UserPrincipal principal) {
+    public List<WorkoutDto> get(
+            @RequestParam(required = false) final Boolean all,
+            @RequestParam(required = false) final Long user,
+            @AuthenticationPrincipal final UserPrincipal principal
+    ) {
         Long principalId = principal.id();
         if (all != null && all) {
             return service.get(principalId);
@@ -59,9 +63,45 @@ public class WorkoutController {
      * @return the data of the workout
      */
     @GetMapping("/{id}")
-    public WorkoutDto get(@PathVariable final Long id,
-                          @AuthenticationPrincipal final UserPrincipal principal) {
+    public WorkoutDto get(
+            @PathVariable final Long id,
+            @AuthenticationPrincipal final UserPrincipal principal
+    ) {
         return service.get(id, principal.id());
+    }
+
+    /**
+     * Partially updates the data of the workout with the given id.
+     *
+     * @param id the id of the workout
+     * @param dto the data for the workout
+     * @param principal the user principal
+     * @return the data of the workout
+     */
+    @PatchMapping("/{id}")
+    public WorkoutDto patch(
+            @PathVariable final Long id,
+            @RequestBody @Valid final WorkoutPatchDto dto,
+            @AuthenticationPrincipal final UserPrincipal principal
+    ) {
+        return service.patch(id, dto, principal.id());
+    }
+
+    /**
+     * Updates the data of the workout with the given id.
+     *
+     * @param id the id of the workout
+     * @param dto the data for the workout
+     * @param principal the user principal
+     * @return the data of the workout
+     */
+    @PutMapping("/{id}")
+    public WorkoutDto put(
+            @PathVariable final Long id,
+            @RequestBody @Valid final WorkoutPutDto dto,
+            @AuthenticationPrincipal final UserPrincipal principal
+    ) {
+        return service.put(id, dto, principal.id());
     }
 
     /**
@@ -71,8 +111,10 @@ public class WorkoutController {
      * @param principal the user principal
      */
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable final Long id,
-                       @AuthenticationPrincipal final UserPrincipal principal) {
+    public void delete(
+            @PathVariable final Long id,
+            @AuthenticationPrincipal final UserPrincipal principal
+    ) {
         service.delete(id, principal.id());
     }
 }

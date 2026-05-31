@@ -38,14 +38,27 @@ public class Workout {
     )
     private List<Segment> segments;
 
+    private String name;
+
+    private String notes;
+
     /**
      * Creates an instance of a {@code Workout} class.
      *
      * @param creator the value for the {@code creator} component
      * @param segments the value for the {@code segments} component
+     * @param name the value for the {@code name} component
+     * @param notes the value for the {@code notes} component
      */
-    public Workout(final Long creator, final List<Segment> segments) {
+    public Workout(
+            final Long creator,
+            final List<Segment> segments,
+            final String name,
+            final String notes
+    ) {
         this.creator = creator;
         this.segments = segments;
+        this.name = name;
+        this.notes = notes;
     }
 }

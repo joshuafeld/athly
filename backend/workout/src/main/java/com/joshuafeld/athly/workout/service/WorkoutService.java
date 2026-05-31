@@ -1,6 +1,6 @@
 package com.joshuafeld.athly.workout.service;
 
-import com.joshuafeld.athly.workout.dto.WorkoutDto;
+import com.joshuafeld.athly.workout.dto.*;
 import com.joshuafeld.athly.workout.mapper.WorkoutMapper;
 import com.joshuafeld.athly.workout.model.Workout;
 import com.joshuafeld.athly.workout.repository.WorkoutRepository;
@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * A workout service.
@@ -25,13 +26,14 @@ public class WorkoutService {
     /**
      * Creates a new workout.
      *
-     * @param creator the creator for the workout
+     * @param dto the data for the workout
+     * @param user the request user
      * @return the data of the workout
      */
     @Transactional
-    public WorkoutDto post(final Long creator) {
-        return mapper.toDto(repository.save(new Workout(creator,
-                Collections.emptyList())));
+    public WorkoutDto post(final WorkoutPostDto dto, final Long user) {
+        return mapper.toDto(repository.save(new Workout(user,
+                Collections.emptyList(), dto.name(), dto.notes())));
     }
 
     /**
@@ -50,6 +52,7 @@ public class WorkoutService {
      * Returns the data of all workouts for the given creator.
      *
      * @param creator the creator of the workouts
+     * @param user the request user
      * @return a list of all workouts' data for the given creator
      */
     @Transactional(readOnly = true)
@@ -73,13 +76,55 @@ public class WorkoutService {
     }
 
     /**
+     * Partially updates the data of the workout with the given id.
+     *
+     * @param id the id of the workout
+     * @param dto the data for the workout
+     * @param user the request user
+     * @return the data of the workout
+     */
+    @Transactional
+    @PreAuthorize("hasRole('ROLE_ADMIN') or @workoutService.isCreator(#id, #user)")
+    public WorkoutDto patch(
+            final Long id,
+            final WorkoutPatchDto dto,
+            final Long user
+    ) {
+        Workout workout = repository.requireById(id);
+        Optional.ofNullable(dto.name()).ifPresent(workout::name);
+        Optional.ofNullable(dto.notes()).ifPresent(workout::notes);
+        return mapper.toDto(repository.save(workout));
+    }
+
+    /**
+     * Updates the data of the workout with the given id.
+     *
+     * @param id the id of the workout
+     * @param dto the data for the workout
+     * @param user the request user
+     * @return the data of the workout
+     */
+    @Transactional
+    @PreAuthorize("hasRole('ROLE_ADMIN') or @workoutService.isCreator(#id, #user)")
+    public WorkoutDto put(
+            final Long id,
+            final WorkoutPutDto dto,
+            final Long user
+    ) {
+        Workout workout = repository.requireById(id);
+        workout.name(dto.name());
+        workout.notes(dto.notes());
+        return mapper.toDto(repository.save(workout));
+    }
+
+    /**
      * Deletes the data of the workout with the given id.
      *
      * @param id the id of the workout
      * @param user the request user
      */
     @Transactional
-    @PreAuthorize("@workoutService.isCreator(#id, #user)")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or @workoutService.isCreator(#id, #user)")
     public void delete(final Long id, final Long user) {
         repository.deleteById(id);
     }

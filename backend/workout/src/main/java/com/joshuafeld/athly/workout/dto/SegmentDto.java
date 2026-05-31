@@ -10,11 +10,13 @@ import java.util.List;
  * @param exercise the value of the {@code exercise} component
  * @param sets the value of the {@code sets} component
  * @param rest the value of the {@code rest} component
+ * @param notes the value of the {@code notes} component
  */
 public record SegmentDto(
         Long id,
         Long workout,
         Long exercise,
         List<Long> sets,
-        Integer rest
+        Integer rest,
+        String notes
 ) { }
