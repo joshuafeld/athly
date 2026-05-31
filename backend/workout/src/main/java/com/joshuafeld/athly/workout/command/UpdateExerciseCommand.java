@@ -12,7 +12,7 @@ import com.joshuafeld.athly.workout.model.Muscle;
  * @param muscle the value for the {@code muscle} component
  * @param owner the value for the {@code owner} component
  */
-public record ExerciseUpdateCommand(
+public record UpdateExerciseCommand(
         Long id,
         String name,
         Equipment equipment,

@@ -27,7 +27,7 @@ public class ExerciseService {
      * @return the exercise
      */
     @Transactional
-    public Exercise create(final ExerciseCreateCommand command) {
+    public Exercise create(final CreateExerciseCommand command) {
         return repository.save(new Exercise(
                 command.name(),
                 command.equipment(),
@@ -43,7 +43,7 @@ public class ExerciseService {
      * @return a list of all exercises
      */
     @Transactional(readOnly = true)
-    public List<Exercise> getAll(final ExerciseGetAllCommand command) {
+    public List<Exercise> getAll(final GetExercisesCommand command) {
         return repository.findAllByOwner(command.owner());
     }
 
@@ -54,7 +54,7 @@ public class ExerciseService {
      * @return the exercise
      */
     @Transactional(readOnly = true)
-    public Exercise getById(final ExerciseGetByIdCommand command) {
+    public Exercise getById(final GetExerciseCommand command) {
         return requireOwner(command.id(), command.owner());
     }
 
@@ -65,7 +65,7 @@ public class ExerciseService {
      * @return the exercise
      */
     @Transactional
-    public Exercise update(final ExerciseUpdateCommand command) {
+    public Exercise update(final UpdateExerciseCommand command) {
         final Exercise exercise = requireOwner(command.id(), command.owner());
         Optional.ofNullable(command.name()).ifPresent(exercise::name);
         Optional.ofNullable(command.equipment()).ifPresent(exercise::equipment);
@@ -80,7 +80,7 @@ public class ExerciseService {
      * @return the exercise
      */
     @Transactional
-    public Exercise replace(final ExerciseReplaceCommand command) {
+    public Exercise replace(final ReplaceExerciseCommand command) {
         final Exercise exercise = requireOwner(command.id(), command.owner());
         exercise.name(command.name());
         exercise.equipment(command.equipment());
@@ -94,7 +94,7 @@ public class ExerciseService {
      * @param command the delete command
      */
     @Transactional
-    public void delete(final ExerciseDeleteCommand command) {
+    public void delete(final DeleteExerciseCommand command) {
         repository.delete(requireOwner(command.id(), command.owner()));
     }
 

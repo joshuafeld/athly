@@ -1,8 +1,8 @@
 package com.joshuafeld.athly.workout.command;
 
 /**
- * A command for getting all exercises.
+ * A command for getting exercises.
  *
  * @param owner the value for the {@code owner} component
  */
-public record ExerciseGetAllCommand(Long owner) { }
+public record GetExercisesCommand(Long owner) { }

@@ -39,7 +39,7 @@ public class ExerciseController {
             @RequestBody @Valid final ExercisePostDto dto,
             @AuthenticationPrincipal final UserPrincipal user
     ) {
-        final Exercise exercise = service.create(new ExerciseCreateCommand(
+        final Exercise exercise = service.create(new CreateExerciseCommand(
                 dto.name(), dto.equipment(), dto.muscle(), user.id()
         ));
         return ResponseEntity
@@ -58,7 +58,7 @@ public class ExerciseController {
     public ResponseEntity<List<ExerciseDto>> get(
             @AuthenticationPrincipal final UserPrincipal user
     ) {
-        return ResponseEntity.ok(service.getAll(new ExerciseGetAllCommand(user.id()))
+        return ResponseEntity.ok(service.getAll(new GetExercisesCommand(user.id()))
                 .stream().map(this::toDto).toList());
     }
 
@@ -75,7 +75,7 @@ public class ExerciseController {
             @AuthenticationPrincipal final UserPrincipal user
     ) {
         return ResponseEntity.ok(
-                toDto(service.getById(new ExerciseGetByIdCommand(id, user.id())))
+                toDto(service.getById(new GetExerciseCommand(id, user.id())))
         );
     }
 
@@ -93,7 +93,7 @@ public class ExerciseController {
             @RequestBody @Valid final ExercisePatchDto dto,
             @AuthenticationPrincipal final UserPrincipal user
     ) {
-        final Exercise exercise = service.update(new ExerciseUpdateCommand(
+        final Exercise exercise = service.update(new UpdateExerciseCommand(
                 id, dto.name(), dto.equipment(), dto.muscle(), user.id()
         ));
         return ResponseEntity.noContent()
@@ -116,7 +116,7 @@ public class ExerciseController {
             @RequestBody @Valid final ExercisePutDto dto,
             @AuthenticationPrincipal final UserPrincipal user
     ) {
-        final Exercise exercise = service.replace(new ExerciseReplaceCommand(
+        final Exercise exercise = service.replace(new ReplaceExerciseCommand(
                 id, dto.name(), dto.equipment(), dto.muscle(), user.id()
         ));
         return ResponseEntity.noContent()
@@ -136,7 +136,7 @@ public class ExerciseController {
             @PathVariable final Long id,
             @AuthenticationPrincipal final UserPrincipal user
     ) {
-        service.delete(new ExerciseDeleteCommand(id, user.id()));
+        service.delete(new DeleteExerciseCommand(id, user.id()));
         return ResponseEntity.noContent().build();
     }
 
