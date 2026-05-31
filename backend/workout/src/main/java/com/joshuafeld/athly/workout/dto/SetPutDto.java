@@ -1,6 +1,7 @@
 package com.joshuafeld.athly.workout.dto;
 
 import com.joshuafeld.athly.workout.model.SetType;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 
 /**
@@ -13,7 +14,7 @@ import jakarta.validation.constraints.NotNull;
  */
 public record SetPutDto(
         @NotNull SetType type,
-        @NotNull Double weight,
-        @NotNull Integer reps,
+        @NotNull @Min(0) Double weight,
+        @NotNull @Min(0) Integer reps,
         @NotNull Boolean done
 ) { }

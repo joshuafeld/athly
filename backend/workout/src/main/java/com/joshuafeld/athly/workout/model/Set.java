@@ -1,6 +1,5 @@
 package com.joshuafeld.athly.workout.model;
 
-import com.joshuafeld.athly.workout.model.SetType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -54,11 +53,13 @@ public class Set {
      * @param reps the value for the {@code reps} component
      * @param done the value for the {@code done} component
      */
-    public Set(final Segment segment,
-               final SetType type,
-               final Double weight,
-               final Integer reps,
-               final Boolean done) {
+    public Set(
+            final Segment segment,
+            final SetType type,
+            final Double weight,
+            final Integer reps,
+            final Boolean done
+    ) {
         this.segment = segment;
         this.type = type;
         this.weight = weight;

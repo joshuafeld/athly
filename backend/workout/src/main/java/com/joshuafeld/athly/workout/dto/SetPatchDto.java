@@ -1,6 +1,7 @@
 package com.joshuafeld.athly.workout.dto;
 
 import com.joshuafeld.athly.workout.model.SetType;
+import jakarta.validation.constraints.Min;
 
 /**
  * A data transfer object for a set patch request.
@@ -12,7 +13,7 @@ import com.joshuafeld.athly.workout.model.SetType;
  */
 public record SetPatchDto(
         SetType type,
-        Double weight,
-        Integer reps,
+        @Min(0) Double weight,
+        @Min(0) Integer reps,
         Boolean done
 ) { }

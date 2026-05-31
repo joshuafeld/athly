@@ -1,5 +1,6 @@
 package com.joshuafeld.athly.workout.dto;
 
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 
 /**
@@ -13,6 +14,6 @@ import jakarta.validation.constraints.NotNull;
 public record SegmentPostDto(
         @NotNull Long workout,
         @NotNull Long exercise,
-        Integer rest,
+        @Min(0) Integer rest,
         String notes
 ) { }

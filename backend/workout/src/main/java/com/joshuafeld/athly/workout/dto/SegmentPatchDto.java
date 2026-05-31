@@ -1,5 +1,7 @@
 package com.joshuafeld.athly.workout.dto;
 
+import jakarta.validation.constraints.Min;
+
 /**
  * A data transfer object for a segment patch request.
  *
@@ -9,6 +11,6 @@ package com.joshuafeld.athly.workout.dto;
  */
 public record SegmentPatchDto(
         Long exercise,
-        Integer rest,
+        @Min(0) Integer rest,
         String notes
 ) { }
