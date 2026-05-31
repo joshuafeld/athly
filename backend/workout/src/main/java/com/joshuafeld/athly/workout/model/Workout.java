@@ -29,7 +29,7 @@ public class Workout {
     @Setter(AccessLevel.NONE)
     private Long id;
 
-    private Long creator;
+    private Long owner;
 
     @OneToMany(
             mappedBy = "workout",
@@ -45,18 +45,18 @@ public class Workout {
     /**
      * Creates an instance of a {@code Workout} class.
      *
-     * @param creator the value for the {@code creator} component
+     * @param owner the value for the {@code owner} component
      * @param segments the value for the {@code segments} component
      * @param name the value for the {@code name} component
      * @param notes the value for the {@code notes} component
      */
     public Workout(
-            final Long creator,
+            final Long owner,
             final List<Segment> segments,
             final String name,
             final String notes
     ) {
-        this.creator = creator;
+        this.owner = owner;
         this.segments = segments;
         this.name = name;
         this.notes = notes;

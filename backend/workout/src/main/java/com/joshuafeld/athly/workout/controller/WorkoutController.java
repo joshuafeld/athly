@@ -1,12 +1,17 @@
 package com.joshuafeld.athly.workout.controller;
 
 import com.joshuafeld.athly.common.security.UserPrincipal;
+import com.joshuafeld.athly.workout.command.*;
 import com.joshuafeld.athly.workout.dto.*;
+import com.joshuafeld.athly.workout.model.Segment;
+import com.joshuafeld.athly.workout.model.Workout;
 import com.joshuafeld.athly.workout.service.WorkoutService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.util.List;
 
@@ -23,51 +28,55 @@ public class WorkoutController {
     /**
      * Creates a new workout.
      *
-     * @param principal the user principal
-     * @return the data of the workout
+     * @param dto the data for the workout
+     * @param user the user principal
+     * @return a created response with the location of the created workout
      */
     @PostMapping
-    public WorkoutDto post(
+    public ResponseEntity<Void> post(
             @RequestBody @Valid final WorkoutPostDto dto,
-            @AuthenticationPrincipal final UserPrincipal principal
+            @AuthenticationPrincipal final UserPrincipal user
     ) {
-        return service.post(dto, principal.id());
+        final Workout workout = service.create(new CreateWorkoutCommand(
+                dto.name(), dto.notes(), user.id()
+        ));
+        return ResponseEntity
+                .created(ServletUriComponentsBuilder.fromCurrentRequest()
+                        .path("/{id}").buildAndExpand(workout.id()).toUri())
+                .build();
     }
 
     /**
-     * Returns the data of all workouts.
+     * Returns all workouts.
      *
-     * @param principal the user principal
-     * @return a list of all workouts' data
+     * @param user the user principal
+     * @return an ok response with a list of all workouts' data
      */
     @GetMapping
-    public List<WorkoutDto> get(
-            @RequestParam(required = false) final Boolean all,
-            @RequestParam(required = false) final Long user,
-            @AuthenticationPrincipal final UserPrincipal principal
+    public ResponseEntity<List<WorkoutDto>> get(
+            @AuthenticationPrincipal final UserPrincipal user
     ) {
-        Long principalId = principal.id();
-        if (all != null && all) {
-            return service.get(principalId);
-        } else if (user != null) {
-            return service.getByCreator(user, principalId);
-        }
-        return service.getByCreator(principalId, principalId);
+        return ResponseEntity.ok(
+                service.getAll(new GetWorkoutsCommand(user.id()))
+                        .stream().map(this::toDto).toList()
+        );
     }
 
     /**
-     * Returns the data of the workout with the given id.
+     * Returns the workout with the given id.
      *
      * @param id the id of the workout
-     * @param principal the user principal
-     * @return the data of the workout
+     * @param user the user principal
+     * @return an ok response with the workout data
      */
     @GetMapping("/{id}")
-    public WorkoutDto get(
+    public ResponseEntity<WorkoutDto> get(
             @PathVariable final Long id,
-            @AuthenticationPrincipal final UserPrincipal principal
+            @AuthenticationPrincipal final UserPrincipal user
     ) {
-        return service.get(id, principal.id());
+        return ResponseEntity.ok(
+                toDto(service.getById(new GetWorkoutCommand(id, user.id())))
+        );
     }
 
     /**
@@ -76,45 +85,68 @@ public class WorkoutController {
      * @param id the id of the workout
      * @param dto the data for the workout
      * @param principal the user principal
-     * @return the data of the workout
+     * @return a no-content response with the location of the updated workout
      */
     @PatchMapping("/{id}")
-    public WorkoutDto patch(
+    public ResponseEntity<Void> patch(
             @PathVariable final Long id,
             @RequestBody @Valid final WorkoutPatchDto dto,
             @AuthenticationPrincipal final UserPrincipal principal
     ) {
-        return service.patch(id, dto, principal.id());
+        final Workout workout = service.update(new UpdateWorkoutCommand(
+                id, dto.name(), dto.notes(), principal.id()
+        ));
+        return ResponseEntity.noContent()
+                .location(ServletUriComponentsBuilder.fromCurrentRequest()
+                        .path("/{id}").buildAndExpand(workout.id()).toUri())
+                .build();
     }
 
     /**
-     * Updates the data of the workout with the given id.
+     * Replaces the workout with the given id.
      *
      * @param id the id of the workout
      * @param dto the data for the workout
      * @param principal the user principal
-     * @return the data of the workout
+     * @return a no-content response with the location of the replaced workout
      */
     @PutMapping("/{id}")
-    public WorkoutDto put(
+    public ResponseEntity<Void> put(
             @PathVariable final Long id,
             @RequestBody @Valid final WorkoutPutDto dto,
             @AuthenticationPrincipal final UserPrincipal principal
     ) {
-        return service.put(id, dto, principal.id());
+        final Workout workout = service.replace(new ReplaceWorkoutCommand(
+                id, dto.name(), dto.notes(), principal.id()
+        ));
+        return ResponseEntity.noContent()
+                .location(ServletUriComponentsBuilder.fromCurrentRequest()
+                        .path("/{id}").buildAndExpand(workout.id()).toUri())
+                .build();
     }
 
     /**
      * Deletes the data of the workout with the given id.
      *
      * @param id the id of the workout
-     * @param principal the user principal
+     * @param user the user principal
+     * @return a no-content response
      */
     @DeleteMapping("/{id}")
-    public void delete(
+    public ResponseEntity<Void> delete(
             @PathVariable final Long id,
-            @AuthenticationPrincipal final UserPrincipal principal
+            @AuthenticationPrincipal final UserPrincipal user
     ) {
-        service.delete(id, principal.id());
+        service.delete(new DeleteWorkoutCommand(id, user.id()));
+        return ResponseEntity.noContent().build();
+    }
+
+    private WorkoutDto toDto(final Workout workout) {
+        return new WorkoutDto(
+                workout.id(),
+                workout.segments().stream().map(Segment::id).toList(),
+                workout.name(),
+                workout.notes()
+        );
     }
 }
