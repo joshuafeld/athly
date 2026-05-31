@@ -11,11 +11,9 @@ import jakarta.validation.constraints.NotNull;
  * @param name the value for the {@code name} component
  * @param equipment the value for the {@code equipment} component
  * @param muscle the value for the {@code muscle} component
- * @param creator the value for the {@code creator} component
  */
 public record ExercisePostDto(
         @NotBlank String name,
         @NotNull Equipment equipment,
-        @NotNull Muscle muscle,
-        Long creator
+        @NotNull Muscle muscle
 ) { }

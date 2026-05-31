@@ -10,12 +10,10 @@ import com.joshuafeld.athly.workout.model.Muscle;
  * @param name the value of the {@code name} component
  * @param equipment the value of the {@code equipment} component
  * @param muscle the value of the {@code muscle} component
- * @param creator the value of the {@code creator} component
  */
 public record ExerciseDto(
         Long id,
         String name,
         Equipment equipment,
-        Muscle muscle,
-        Long creator
+        Muscle muscle
 ) { }

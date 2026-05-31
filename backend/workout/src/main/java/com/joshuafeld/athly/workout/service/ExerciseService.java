@@ -1,7 +1,7 @@
 package com.joshuafeld.athly.workout.service;
 
-import com.joshuafeld.athly.workout.dto.*;
-import com.joshuafeld.athly.workout.mapper.ExerciseMapper;
+import com.joshuafeld.athly.workout.command.*;
+import com.joshuafeld.athly.workout.exception.ExerciseAccessDeniedException;
 import com.joshuafeld.athly.workout.model.Exercise;
 import com.joshuafeld.athly.workout.repository.ExerciseRepository;
 import lombok.AllArgsConstructor;
@@ -20,82 +20,89 @@ public class ExerciseService {
 
     private final ExerciseRepository repository;
 
-    private final ExerciseMapper mapper;
-
     /**
      * Creates a new exercise.
      *
-     * @param dto the data for the exercise
-     * @return the data of the exercise
+     * @param command the create command
+     * @return the exercise
      */
     @Transactional
-    public ExerciseDto post(final ExercisePostDto dto) {
-        return mapper.toDto(repository.save(new Exercise(dto.name(),
-                dto.equipment(), dto.muscle(), dto.creator())));
+    public Exercise create(final ExerciseCreateCommand command) {
+        return repository.save(new Exercise(
+                command.name(),
+                command.equipment(),
+                command.muscle(),
+                command.owner()
+        ));
     }
 
     /**
-     * Returns the data of all exercises.
+     * Returns all exercises.
      *
-     * @return a list of all exercises' data
+     * @param command the get-all command
+     * @return a list of all exercises
      */
     @Transactional(readOnly = true)
-    public List<ExerciseDto> get() {
-        return repository.findAll().stream().map(mapper::toDto).toList();
+    public List<Exercise> getAll(final ExerciseGetAllCommand command) {
+        return repository.findAllByOwner(command.owner());
     }
 
     /**
-     * Returns the data of the exercise with the given id.
+     * Returns the exercise with the given id.
      *
-     * @param id the id of the exercise
-     * @return the data of the exercise
+     * @param command the get-by-id command
+     * @return the exercise
      */
     @Transactional(readOnly = true)
-    public ExerciseDto get(final Long id) {
-        return mapper.toDto(repository.requireById(id));
+    public Exercise getById(final ExerciseGetByIdCommand command) {
+        return requireOwner(command.id(), command.owner());
     }
 
     /**
-     * Partially updates the data of the exercise with the given id.
+     * Updates the exercise with the given id.
      *
-     * @param id the id of the exercise
-     * @param dto the data for the exercise
-     * @return the data of the exercise
+     * @param command the update command
+     * @return the exercise
      */
     @Transactional
-    public ExerciseDto patch(final Long id, final ExercisePatchDto dto) {
-        Exercise exercise = repository.requireById(id);
-        Optional.ofNullable(dto.name()).ifPresent(exercise::name);
-        Optional.ofNullable(dto.equipment()).ifPresent(exercise::equipment);
-        Optional.ofNullable(dto.muscle()).ifPresent(exercise::muscle);
-        Optional.ofNullable(dto.creator()).ifPresent(exercise::creator);
-        return mapper.toDto(repository.save(exercise));
+    public Exercise update(final ExerciseUpdateCommand command) {
+        final Exercise exercise = requireOwner(command.id(), command.owner());
+        Optional.ofNullable(command.name()).ifPresent(exercise::name);
+        Optional.ofNullable(command.equipment()).ifPresent(exercise::equipment);
+        Optional.ofNullable(command.muscle()).ifPresent(exercise::muscle);
+        return repository.save(exercise);
     }
 
     /**
-     * Updates the data of the exercise with the given id.
+     * Replaces the exercise with the given id.
      *
-     * @param id the id of the exercise
-     * @param dto the data for the exercise
-     * @return the data of the exercise
+     * @param command the replace command
+     * @return the exercise
      */
     @Transactional
-    public ExerciseDto put(final Long id, final ExercisePutDto dto) {
-        Exercise exercise = repository.requireById(id);
-        exercise.name(dto.name());
-        exercise.equipment(dto.equipment());
-        exercise.muscle(dto.muscle());
-        exercise.creator(dto.creator());
-        return mapper.toDto(repository.save(exercise));
+    public Exercise replace(final ExerciseReplaceCommand command) {
+        final Exercise exercise = requireOwner(command.id(), command.owner());
+        exercise.name(command.name());
+        exercise.equipment(command.equipment());
+        exercise.muscle(command.muscle());
+        return repository.save(exercise);
     }
 
     /**
-     * Deletes the data of the exercise with the given id.
+     * Deletes the exercise with the given id.
      *
-     * @param id the id of the exercise
+     * @param command the delete command
      */
     @Transactional
-    public void delete(final Long id) {
-        repository.deleteById(id);
+    public void delete(final ExerciseDeleteCommand command) {
+        repository.delete(requireOwner(command.id(), command.owner()));
+    }
+
+    private Exercise requireOwner(final Long id, final Long owner) {
+        final Exercise exercise = repository.requireById(id);
+        if (!exercise.owner().equals(owner)) {
+            throw new ExerciseAccessDeniedException(id);
+        }
+        return exercise;
     }
 }

@@ -28,7 +28,7 @@ public class Exercise {
     @Setter(AccessLevel.NONE)
     private Long id;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String name;
 
     @Enumerated(EnumType.STRING)
@@ -39,7 +39,7 @@ public class Exercise {
     @Column(nullable = false)
     private Muscle muscle;
 
-    private Long creator;
+    private Long owner;
 
     /**
      * Creates an instance of an {@code Exercise} class.
@@ -47,15 +47,17 @@ public class Exercise {
      * @param name the value for the {@code name} component
      * @param equipment the value for the {@code equipment} component
      * @param muscle the value for the {@code muscle} component
-     * @param creator the value for the {@code creator} component
+     * @param owner the value for the {@code owner} component
      */
-    public Exercise(final String name,
-                    final Equipment equipment,
-                    final Muscle muscle,
-                    final Long creator) {
+    public Exercise(
+            final String name,
+            final Equipment equipment,
+            final Muscle muscle,
+            final Long owner
+    ) {
         this.name = name;
         this.equipment = equipment;
         this.muscle = muscle;
-        this.creator = creator;
+        this.owner = owner;
     }
 }
