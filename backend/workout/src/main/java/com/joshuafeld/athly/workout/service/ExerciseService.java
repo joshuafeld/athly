@@ -1,7 +1,11 @@
 package com.joshuafeld.athly.workout.service;
 
-import com.joshuafeld.athly.workout.command.*;
-import com.joshuafeld.athly.workout.exception.ExerciseAccessDeniedException;
+import com.joshuafeld.athly.workout.command.CreateExerciseCommand;
+import com.joshuafeld.athly.workout.command.DeleteExerciseCommand;
+import com.joshuafeld.athly.workout.command.GetExerciseCommand;
+import com.joshuafeld.athly.workout.command.GetExercisesCommand;
+import com.joshuafeld.athly.workout.command.ReplaceExerciseCommand;
+import com.joshuafeld.athly.workout.command.UpdateExerciseCommand;
 import com.joshuafeld.athly.workout.exception.ExerciseNotFoundException;
 import com.joshuafeld.athly.workout.model.Exercise;
 import com.joshuafeld.athly.workout.repository.ExerciseRepository;
@@ -56,7 +60,7 @@ public class ExerciseService {
      */
     @Transactional(readOnly = true)
     public Exercise getById(final GetExerciseCommand command) {
-        return requireOwner(command.id(), command.owner());
+        return requireByIdAndOwner(command.id(), command.owner());
     }
 
     /**
@@ -67,7 +71,7 @@ public class ExerciseService {
      */
     @Transactional
     public Exercise update(final UpdateExerciseCommand command) {
-        final Exercise exercise = requireOwner(command.id(), command.owner());
+        final Exercise exercise = requireByIdAndOwner(command.id(), command.owner());
         Optional.ofNullable(command.name()).ifPresent(exercise::name);
         Optional.ofNullable(command.equipment()).ifPresent(exercise::equipment);
         Optional.ofNullable(command.muscle()).ifPresent(exercise::muscle);
@@ -82,7 +86,7 @@ public class ExerciseService {
      */
     @Transactional
     public Exercise replace(final ReplaceExerciseCommand command) {
-        final Exercise exercise = requireOwner(command.id(), command.owner());
+        final Exercise exercise = requireByIdAndOwner(command.id(), command.owner());
         exercise.name(command.name());
         exercise.equipment(command.equipment());
         exercise.muscle(command.muscle());
@@ -96,15 +100,14 @@ public class ExerciseService {
      */
     @Transactional
     public void delete(final DeleteExerciseCommand command) {
-        repository.delete(requireOwner(command.id(), command.owner()));
+        final Long id = command.id();
+        if (repository.deleteByIdAndOwner(id, command.owner()) == 0) {
+            throw new ExerciseNotFoundException(id);
+        }
     }
 
-    private Exercise requireOwner(final Long id, final Long owner) {
-        final Exercise exercise = repository.findById(id)
+    private Exercise requireByIdAndOwner(final Long id, final Long owner) {
+        return repository.findByIdAndOwner(id, owner)
                 .orElseThrow(() -> new ExerciseNotFoundException(id));
-        if (!exercise.owner().equals(owner)) {
-            throw new ExerciseAccessDeniedException(id);
-        }
-        return exercise;
     }
 }

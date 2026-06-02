@@ -1,8 +1,16 @@
 package com.joshuafeld.athly.workout.controller;
 
 import com.joshuafeld.athly.common.security.UserPrincipal;
-import com.joshuafeld.athly.workout.command.*;
-import com.joshuafeld.athly.workout.dto.*;
+import com.joshuafeld.athly.workout.command.CreateWorkoutCommand;
+import com.joshuafeld.athly.workout.command.DeleteWorkoutCommand;
+import com.joshuafeld.athly.workout.command.GetWorkoutCommand;
+import com.joshuafeld.athly.workout.command.GetWorkoutsCommand;
+import com.joshuafeld.athly.workout.command.ReplaceWorkoutCommand;
+import com.joshuafeld.athly.workout.command.UpdateWorkoutCommand;
+import com.joshuafeld.athly.workout.dto.WorkoutDto;
+import com.joshuafeld.athly.workout.dto.WorkoutPatchDto;
+import com.joshuafeld.athly.workout.dto.WorkoutPostDto;
+import com.joshuafeld.athly.workout.dto.WorkoutPutDto;
 import com.joshuafeld.athly.workout.model.Segment;
 import com.joshuafeld.athly.workout.model.Workout;
 import com.joshuafeld.athly.workout.service.WorkoutService;

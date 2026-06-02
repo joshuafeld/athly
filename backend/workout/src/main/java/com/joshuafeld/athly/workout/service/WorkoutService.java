@@ -1,7 +1,11 @@
 package com.joshuafeld.athly.workout.service;
 
-import com.joshuafeld.athly.workout.command.*;
-import com.joshuafeld.athly.workout.exception.WorkoutAccessDeniedException;
+import com.joshuafeld.athly.workout.command.CreateWorkoutCommand;
+import com.joshuafeld.athly.workout.command.DeleteWorkoutCommand;
+import com.joshuafeld.athly.workout.command.GetWorkoutCommand;
+import com.joshuafeld.athly.workout.command.GetWorkoutsCommand;
+import com.joshuafeld.athly.workout.command.ReplaceWorkoutCommand;
+import com.joshuafeld.athly.workout.command.UpdateWorkoutCommand;
 import com.joshuafeld.athly.workout.exception.WorkoutNotFoundException;
 import com.joshuafeld.athly.workout.model.Workout;
 import com.joshuafeld.athly.workout.repository.WorkoutRepository;
@@ -26,7 +30,7 @@ public class WorkoutService {
      * Creates a new workout.
      *
      * @param command the create command
-     * @return the data of the workout
+     * @return the workout
      */
     @Transactional
     public Workout create(final CreateWorkoutCommand command) {
@@ -57,7 +61,7 @@ public class WorkoutService {
      */
     @Transactional(readOnly = true)
     public Workout getById(final GetWorkoutCommand command) {
-        return requireOwner(command.id(), command.owner());
+        return requireByIdAndOwner(command.id(), command.owner());
     }
 
     /**
@@ -68,7 +72,7 @@ public class WorkoutService {
      */
     @Transactional
     public Workout update(final UpdateWorkoutCommand command) {
-        Workout workout = requireOwner(command.id(), command.owner());
+        Workout workout = requireByIdAndOwner(command.id(), command.owner());
         Optional.ofNullable(command.name()).ifPresent(workout::name);
         Optional.ofNullable(command.notes()).ifPresent(workout::notes);
         return repository.save(workout);
@@ -82,7 +86,7 @@ public class WorkoutService {
      */
     @Transactional
     public Workout replace(final ReplaceWorkoutCommand command) {
-        Workout workout = requireOwner(command.id(), command.owner());
+        final Workout workout = requireByIdAndOwner(command.id(), command.owner());
         workout.name(command.name());
         workout.notes(command.notes());
         return repository.save(workout);
@@ -95,15 +99,14 @@ public class WorkoutService {
      */
     @Transactional
     public void delete(final DeleteWorkoutCommand command) {
-        repository.delete(requireOwner(command.id(), command.owner()));
+        final Long id = command.id();
+        if (repository.deleteByIdAndOwner(id, command.owner()) == 1) {
+            throw new WorkoutNotFoundException(id);
+        }
     }
 
-    private Workout requireOwner(final Long id, final Long user) {
-        final Workout workout = repository.findById(id)
+    private Workout requireByIdAndOwner(final Long id, final Long owner) {
+        return repository.findByIdAndOwner(id, owner)
                 .orElseThrow(() -> new WorkoutNotFoundException(id));
-        if (!workout.owner().equals(user)) {
-            throw new WorkoutAccessDeniedException(id);
-        }
-        return workout;
     }
 }

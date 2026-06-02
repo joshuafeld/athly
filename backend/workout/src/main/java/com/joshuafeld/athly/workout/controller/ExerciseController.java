@@ -1,7 +1,12 @@
 package com.joshuafeld.athly.workout.controller;
 
 import com.joshuafeld.athly.common.security.UserPrincipal;
-import com.joshuafeld.athly.workout.command.*;
+import com.joshuafeld.athly.workout.command.CreateExerciseCommand;
+import com.joshuafeld.athly.workout.command.DeleteExerciseCommand;
+import com.joshuafeld.athly.workout.command.GetExerciseCommand;
+import com.joshuafeld.athly.workout.command.GetExercisesCommand;
+import com.joshuafeld.athly.workout.command.ReplaceExerciseCommand;
+import com.joshuafeld.athly.workout.command.UpdateExerciseCommand;
 import com.joshuafeld.athly.workout.dto.ExercisePatchDto;
 import com.joshuafeld.athly.workout.dto.ExercisePostDto;
 import com.joshuafeld.athly.workout.dto.ExerciseDto;
@@ -35,7 +40,7 @@ public class ExerciseController {
      * @return the data of the exercise
      */
     @PostMapping
-    public ResponseEntity<ExerciseDto> post(
+    public ResponseEntity<Void> post(
             @RequestBody @Valid final ExercisePostDto dto,
             @AuthenticationPrincipal final UserPrincipal user
     ) {
@@ -88,7 +93,7 @@ public class ExerciseController {
      * @return the data of the exercise
      */
     @PatchMapping("/{id}")
-    public ResponseEntity<ExerciseDto> patch(
+    public ResponseEntity<Void> patch(
             @PathVariable final Long id,
             @RequestBody @Valid final ExercisePatchDto dto,
             @AuthenticationPrincipal final UserPrincipal user
@@ -111,7 +116,7 @@ public class ExerciseController {
      * @return the data of the exercise
      */
     @PutMapping("/{id}")
-    public ResponseEntity<ExerciseDto> put(
+    public ResponseEntity<Void> put(
             @PathVariable final Long id,
             @RequestBody @Valid final ExercisePutDto dto,
             @AuthenticationPrincipal final UserPrincipal user
