@@ -2,6 +2,10 @@ package com.joshuafeld.athly.workout.command;
 
 import com.joshuafeld.athly.workout.model.Equipment;
 import com.joshuafeld.athly.workout.model.Muscle;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
 
 /**
  * A command for creating an exercise.
@@ -12,8 +16,8 @@ import com.joshuafeld.athly.workout.model.Muscle;
  * @param owner the value for the {@code owner} component
  */
 public record CreateExerciseCommand(
-        String name,
-        Equipment equipment,
-        Muscle muscle,
-        Long owner
+        @NotBlank @Size(max = 100) String name,
+        @NotNull Equipment equipment,
+        @NotNull Muscle muscle,
+        @NotNull @Positive Long owner
 ) { }

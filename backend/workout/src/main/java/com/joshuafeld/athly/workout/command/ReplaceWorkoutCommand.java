@@ -1,5 +1,10 @@
 package com.joshuafeld.athly.workout.command;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
+
 /**
  * A command for replacing a workout.
  *
@@ -9,8 +14,8 @@ package com.joshuafeld.athly.workout.command;
  * @param owner the value for the {@code owner} component
  */
 public record ReplaceWorkoutCommand(
-        Long id,
-        String name,
-        String notes,
-        Long owner
+        @NotNull @Positive Long id,
+        @NotBlank @Size(max = 100) String name,
+        @NotBlank @Size(max = 1000) String notes,
+        @NotNull @Positive Long owner
 ) { }

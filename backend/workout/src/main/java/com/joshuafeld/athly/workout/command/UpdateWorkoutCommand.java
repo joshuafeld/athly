@@ -1,5 +1,9 @@
 package com.joshuafeld.athly.workout.command;
 
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
+
 /**
  * A command for updating a workout.
  *
@@ -9,8 +13,8 @@ package com.joshuafeld.athly.workout.command;
  * @param owner the value for the {@code owner} component
  */
 public record UpdateWorkoutCommand(
-        Long id,
-        String name,
-        String notes,
-        Long owner
+        @NotNull @Positive Long id,
+        @Size(max = 100) String name,
+        @Size(max = 1000) String notes,
+        @NotNull @Positive Long owner
 ) { }

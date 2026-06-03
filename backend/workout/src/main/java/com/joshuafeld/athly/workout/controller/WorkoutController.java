@@ -3,22 +3,31 @@ package com.joshuafeld.athly.workout.controller;
 import com.joshuafeld.athly.common.security.UserPrincipal;
 import com.joshuafeld.athly.workout.command.CreateWorkoutCommand;
 import com.joshuafeld.athly.workout.command.DeleteWorkoutCommand;
+import com.joshuafeld.athly.workout.command.GetAllWorkoutsCommand;
 import com.joshuafeld.athly.workout.command.GetWorkoutCommand;
-import com.joshuafeld.athly.workout.command.GetWorkoutsCommand;
 import com.joshuafeld.athly.workout.command.ReplaceWorkoutCommand;
 import com.joshuafeld.athly.workout.command.UpdateWorkoutCommand;
+import com.joshuafeld.athly.workout.command.WorkoutResult;
+import com.joshuafeld.athly.workout.dto.PatchWorkoutDto;
+import com.joshuafeld.athly.workout.dto.PostWorkoutDto;
+import com.joshuafeld.athly.workout.dto.PutWorkoutDto;
 import com.joshuafeld.athly.workout.dto.WorkoutDto;
-import com.joshuafeld.athly.workout.dto.WorkoutPatchDto;
-import com.joshuafeld.athly.workout.dto.WorkoutPostDto;
-import com.joshuafeld.athly.workout.dto.WorkoutPutDto;
-import com.joshuafeld.athly.workout.model.Segment;
-import com.joshuafeld.athly.workout.model.Workout;
 import com.joshuafeld.athly.workout.service.WorkoutService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.util.List;
@@ -26,6 +35,7 @@ import java.util.List;
 /**
  * A workout controller.
  */
+@Validated
 @RestController
 @RequestMapping("/workouts")
 @AllArgsConstructor
@@ -42,10 +52,10 @@ public class WorkoutController {
      */
     @PostMapping
     public ResponseEntity<Void> post(
-            @RequestBody @Valid final WorkoutPostDto dto,
+            @RequestBody @Valid final PostWorkoutDto dto,
             @AuthenticationPrincipal final UserPrincipal user
     ) {
-        final Workout workout = service.create(new CreateWorkoutCommand(
+        final var workout = service.create(new CreateWorkoutCommand(
                 dto.name(), dto.notes(), user.id()
         ));
         return ResponseEntity
@@ -65,8 +75,8 @@ public class WorkoutController {
             @AuthenticationPrincipal final UserPrincipal user
     ) {
         return ResponseEntity.ok(
-                service.getAll(new GetWorkoutsCommand(user.id()))
-                        .stream().map(this::toDto).toList()
+                service.getAll(new GetAllWorkoutsCommand(user.id()))
+                        .stream().map(this::fromResultToDto).toList()
         );
     }
 
@@ -79,11 +89,11 @@ public class WorkoutController {
      */
     @GetMapping("/{id}")
     public ResponseEntity<WorkoutDto> get(
-            @PathVariable final Long id,
+            @PathVariable @Positive final Long id,
             @AuthenticationPrincipal final UserPrincipal user
     ) {
         return ResponseEntity.ok(
-                toDto(service.getById(new GetWorkoutCommand(id, user.id())))
+                fromResultToDto(service.get(new GetWorkoutCommand(id, user.id())))
         );
     }
 
@@ -97,11 +107,11 @@ public class WorkoutController {
      */
     @PatchMapping("/{id}")
     public ResponseEntity<Void> patch(
-            @PathVariable final Long id,
-            @RequestBody @Valid final WorkoutPatchDto dto,
+            @PathVariable @Positive final Long id,
+            @RequestBody @Valid final PatchWorkoutDto dto,
             @AuthenticationPrincipal final UserPrincipal principal
     ) {
-        final Workout workout = service.update(new UpdateWorkoutCommand(
+        final var workout = service.update(new UpdateWorkoutCommand(
                 id, dto.name(), dto.notes(), principal.id()
         ));
         return ResponseEntity.noContent()
@@ -120,11 +130,11 @@ public class WorkoutController {
      */
     @PutMapping("/{id}")
     public ResponseEntity<Void> put(
-            @PathVariable final Long id,
-            @RequestBody @Valid final WorkoutPutDto dto,
+            @PathVariable @Positive final Long id,
+            @RequestBody @Valid final PutWorkoutDto dto,
             @AuthenticationPrincipal final UserPrincipal principal
     ) {
-        final Workout workout = service.replace(new ReplaceWorkoutCommand(
+        final var workout = service.replace(new ReplaceWorkoutCommand(
                 id, dto.name(), dto.notes(), principal.id()
         ));
         return ResponseEntity.noContent()
@@ -142,19 +152,14 @@ public class WorkoutController {
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(
-            @PathVariable final Long id,
+            @PathVariable @Positive final Long id,
             @AuthenticationPrincipal final UserPrincipal user
     ) {
         service.delete(new DeleteWorkoutCommand(id, user.id()));
         return ResponseEntity.noContent().build();
     }
 
-    private WorkoutDto toDto(final Workout workout) {
-        return new WorkoutDto(
-                workout.id(),
-                workout.segments().stream().map(Segment::id).toList(),
-                workout.name(),
-                workout.notes()
-        );
+    private WorkoutDto fromResultToDto(final WorkoutResult result) {
+        return new WorkoutDto(result.id(), result.segments(), result.name(), result.notes());
     }
 }
