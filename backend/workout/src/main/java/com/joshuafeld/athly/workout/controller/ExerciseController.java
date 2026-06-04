@@ -4,7 +4,7 @@ import com.joshuafeld.athly.common.security.UserPrincipal;
 import com.joshuafeld.athly.workout.command.CreateExerciseCommand;
 import com.joshuafeld.athly.workout.command.DeleteExerciseCommand;
 import com.joshuafeld.athly.workout.command.ExerciseResult;
-import com.joshuafeld.athly.workout.command.GetAllExercisesCommand;
+import com.joshuafeld.athly.workout.command.GetManyExercisesCommand;
 import com.joshuafeld.athly.workout.command.GetExerciseCommand;
 import com.joshuafeld.athly.workout.command.ReplaceExerciseCommand;
 import com.joshuafeld.athly.workout.command.UpdateExerciseCommand;
@@ -48,7 +48,7 @@ public class ExerciseController {
      *
      * @param dto the data for the exercise
      * @param user the request user
-     * @return the data of the exercise
+     * @return a created response with the location of the exercise
      */
     @PostMapping
     public ResponseEntity<Void> post(
@@ -65,25 +65,25 @@ public class ExerciseController {
     }
 
     /**
-     * Returns the data of all exercises.
+     * Returns many exercises.
      *
      * @param user the request user
-     * @return a list of all exercises' data
+     * @return an ok response with a list of many exercises
      */
     @GetMapping
     public ResponseEntity<List<ExerciseDto>> get(
             @AuthenticationPrincipal final UserPrincipal user
     ) {
-        return ResponseEntity.ok(service.getAll(new GetAllExercisesCommand(user.id()))
+        return ResponseEntity.ok(service.getMany(new GetManyExercisesCommand(user.id()))
                 .stream().map(this::fromResultToDto).toList());
     }
 
     /**
-     * Returns the data of the exercise with the given id.
+     * Returns the exercise with the given id.
      *
      * @param id the id of the exercise
      * @param user the request user
-     * @return the data of the exercise
+     * @return an ok response with the exercise
      */
     @GetMapping("/{id}")
     public ResponseEntity<ExerciseDto> get(
@@ -94,12 +94,12 @@ public class ExerciseController {
     }
 
     /**
-     * Partially updates the data of the exercise with the given id.
+     * Partially updates the exercise with the given id.
      *
      * @param id the id of the exercise
      * @param dto the data for the exercise
      * @param user the request user
-     * @return the data of the exercise
+     * @return a no-content response with the location of the exercise
      */
     @PatchMapping("/{id}")
     public ResponseEntity<Void> patch(
@@ -117,12 +117,12 @@ public class ExerciseController {
     }
 
     /**
-     * Updates the data of the exercise with the given id.
+     * Updates the exercise with the given id.
      *
      * @param id the id of the exercise
      * @param dto the data for the exercise
      * @param user the request user
-     * @return the data of the exercise
+     * @return a no-content response with the location of the exercise
      */
     @PutMapping("/{id}")
     public ResponseEntity<Void> put(
@@ -144,6 +144,7 @@ public class ExerciseController {
      *
      * @param id the id of the exercise
      * @param user the request user
+     * @return a no-content response
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(

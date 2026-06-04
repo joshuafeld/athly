@@ -13,11 +13,11 @@ import jakarta.validation.constraints.Size;
  * @param name the value for the {@code name} component
  * @param equipment the value for the {@code equipment} component
  * @param muscle the value for the {@code muscle} component
- * @param owner the value for the {@code owner} component
+ * @param userId the value for the {@code userId} component
  */
 public record CreateExerciseCommand(
         @NotBlank @Size(max = 100) String name,
         @NotNull Equipment equipment,
         @NotNull Muscle muscle,
-        @NotNull @Positive Long owner
+        @NotNull @Positive Long userId
 ) { }

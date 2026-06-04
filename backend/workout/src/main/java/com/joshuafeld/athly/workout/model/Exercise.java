@@ -29,6 +29,9 @@ public class Exercise {
     private Long id;
 
     @Column(nullable = false)
+    private Long ownerId;
+
+    @Column(nullable = false)
     private String name;
 
     @Enumerated(EnumType.STRING)
@@ -39,25 +42,23 @@ public class Exercise {
     @Column(nullable = false)
     private Muscle muscle;
 
-    private Long owner;
-
     /**
      * Creates an instance of an {@code Exercise} class.
      *
+     * @param ownerId the value for the {@code ownerId} component
      * @param name the value for the {@code name} component
      * @param equipment the value for the {@code equipment} component
      * @param muscle the value for the {@code muscle} component
-     * @param owner the value for the {@code owner} component
      */
     public Exercise(
+            final Long ownerId,
             final String name,
             final Equipment equipment,
-            final Muscle muscle,
-            final Long owner
+            final Muscle muscle
     ) {
+        this.ownerId = ownerId;
         this.name = name;
         this.equipment = equipment;
         this.muscle = muscle;
-        this.owner = owner;
     }
 }

@@ -11,11 +11,11 @@ import jakarta.validation.constraints.Size;
  * @param id the value for the {@code id} component
  * @param name the value for the {@code name} component
  * @param notes the value for the {@code notes} component
- * @param owner the value for the {@code owner} component
+ * @param userId the value for the {@code userId} component
  */
 public record ReplaceWorkoutCommand(
         @NotNull @Positive Long id,
         @NotBlank @Size(max = 100) String name,
         @NotBlank @Size(max = 1000) String notes,
-        @NotNull @Positive Long owner
+        @NotNull @Positive Long userId
 ) { }

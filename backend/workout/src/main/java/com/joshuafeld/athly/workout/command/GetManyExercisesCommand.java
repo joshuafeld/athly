@@ -4,12 +4,8 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
 /**
- * A command for getting an exercise.
+ * A command for getting many exercises.
  *
- * @param id the value for the {@code id} component
  * @param userId the value for the {@code userId} component
  */
-public record GetExerciseCommand(
-        @NotNull @Positive Long id,
-        @NotNull @Positive Long userId
-) { }
+public record GetManyExercisesCommand(@NotNull @Positive Long userId) { }

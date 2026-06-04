@@ -7,9 +7,9 @@ import jakarta.validation.constraints.Positive;
  * A command for deleting an exercise.
  *
  * @param id the value for the {@code id} component
- * @param owner the value for the {@code owner} component
+ * @param userId the value for the {@code userId} component
  */
 public record DeleteExerciseCommand(
         @NotNull @Positive Long id,
-        @NotNull @Positive Long owner
+        @NotNull @Positive Long userId
 ) { }

@@ -5,7 +5,7 @@ import com.joshuafeld.athly.workout.command.DeleteExerciseCommand;
 import com.joshuafeld.athly.workout.command.ExerciseIdResult;
 import com.joshuafeld.athly.workout.command.ExerciseResult;
 import com.joshuafeld.athly.workout.command.GetExerciseCommand;
-import com.joshuafeld.athly.workout.command.GetAllExercisesCommand;
+import com.joshuafeld.athly.workout.command.GetManyExercisesCommand;
 import com.joshuafeld.athly.workout.command.ReplaceExerciseCommand;
 import com.joshuafeld.athly.workout.command.UpdateExerciseCommand;
 import com.joshuafeld.athly.workout.exception.ExerciseNotFoundException;
@@ -36,22 +36,22 @@ public class ExerciseService {
     @Transactional
     public ExerciseIdResult create(final CreateExerciseCommand command) {
         return new ExerciseIdResult(repository.save(new Exercise(
+                command.userId(),
                 command.name(),
                 command.equipment(),
-                command.muscle(),
-                command.owner()
+                command.muscle()
         )).id());
     }
 
     /**
-     * Returns all exercises.
+     * Returns many exercises.
      *
-     * @param command the get-all command
-     * @return a list of all exercise results
+     * @param command the get-many command
+     * @return a list of many exercise results
      */
     @Transactional(readOnly = true)
-    public List<ExerciseResult> getAll(final GetAllExercisesCommand command) {
-        return repository.findAllByOwner(command.owner())
+    public List<ExerciseResult> getMany(final GetManyExercisesCommand command) {
+        return repository.findAllByOwnerId(command.userId())
                 .stream().map(this::fromEntityToResult).toList();
     }
 
@@ -63,7 +63,7 @@ public class ExerciseService {
      */
     @Transactional(readOnly = true)
     public ExerciseResult get(final GetExerciseCommand command) {
-        return fromEntityToResult(requireByIdAndOwner(command.id(), command.owner()));
+        return fromEntityToResult(requireByIdAndOwnerId(command.id(), command.userId()));
     }
 
     /**
@@ -74,7 +74,7 @@ public class ExerciseService {
      */
     @Transactional
     public ExerciseIdResult update(final UpdateExerciseCommand command) {
-        final var exercise = requireByIdAndOwner(command.id(), command.owner());
+        final var exercise = requireByIdAndOwnerId(command.id(), command.userId());
         Optional.ofNullable(command.name()).ifPresent(exercise::name);
         Optional.ofNullable(command.equipment()).ifPresent(exercise::equipment);
         Optional.ofNullable(command.muscle()).ifPresent(exercise::muscle);
@@ -89,7 +89,7 @@ public class ExerciseService {
      */
     @Transactional
     public ExerciseIdResult replace(final ReplaceExerciseCommand command) {
-        final var exercise = requireByIdAndOwner(command.id(), command.owner());
+        final var exercise = requireByIdAndOwnerId(command.id(), command.userId());
         exercise.name(command.name());
         exercise.equipment(command.equipment());
         exercise.muscle(command.muscle());
@@ -104,13 +104,13 @@ public class ExerciseService {
     @Transactional
     public void delete(final DeleteExerciseCommand command) {
         final var id = command.id();
-        if (repository.deleteByIdAndOwner(id, command.owner()) == 0) {
+        if (repository.deleteByIdAndOwnerId(id, command.userId()) == 0) {
             throw new ExerciseNotFoundException(id);
         }
     }
 
-    private Exercise requireByIdAndOwner(final Long id, final Long owner) {
-        return repository.findByIdAndOwner(id, owner)
+    private Exercise requireByIdAndOwnerId(final Long id, final Long ownerId) {
+        return repository.findByIdAndOwnerId(id, ownerId)
                 .orElseThrow(() -> new ExerciseNotFoundException(id));
     }
 

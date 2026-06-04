@@ -3,7 +3,7 @@ package com.joshuafeld.athly.workout.controller;
 import com.joshuafeld.athly.common.security.UserPrincipal;
 import com.joshuafeld.athly.workout.command.CreateWorkoutCommand;
 import com.joshuafeld.athly.workout.command.DeleteWorkoutCommand;
-import com.joshuafeld.athly.workout.command.GetAllWorkoutsCommand;
+import com.joshuafeld.athly.workout.command.GetManyWorkoutsCommand;
 import com.joshuafeld.athly.workout.command.GetWorkoutCommand;
 import com.joshuafeld.athly.workout.command.ReplaceWorkoutCommand;
 import com.joshuafeld.athly.workout.command.UpdateWorkoutCommand;
@@ -48,7 +48,7 @@ public class WorkoutController {
      *
      * @param dto the data for the workout
      * @param user the user principal
-     * @return a created response with the location of the created workout
+     * @return a created response with the location of the workout
      */
     @PostMapping
     public ResponseEntity<Void> post(
@@ -65,17 +65,17 @@ public class WorkoutController {
     }
 
     /**
-     * Returns all workouts.
+     * Returns many workouts.
      *
      * @param user the user principal
-     * @return an ok response with a list of all workouts' data
+     * @return an ok response with a list of many workouts
      */
     @GetMapping
     public ResponseEntity<List<WorkoutDto>> get(
             @AuthenticationPrincipal final UserPrincipal user
     ) {
         return ResponseEntity.ok(
-                service.getAll(new GetAllWorkoutsCommand(user.id()))
+                service.getMany(new GetManyWorkoutsCommand(user.id()))
                         .stream().map(this::fromResultToDto).toList()
         );
     }
@@ -85,7 +85,7 @@ public class WorkoutController {
      *
      * @param id the id of the workout
      * @param user the user principal
-     * @return an ok response with the workout data
+     * @return an ok response with the workout
      */
     @GetMapping("/{id}")
     public ResponseEntity<WorkoutDto> get(
@@ -98,12 +98,12 @@ public class WorkoutController {
     }
 
     /**
-     * Partially updates the data of the workout with the given id.
+     * Updates the workout with the given id.
      *
      * @param id the id of the workout
      * @param dto the data for the workout
      * @param principal the user principal
-     * @return a no-content response with the location of the updated workout
+     * @return a no-content response with the location of the workout
      */
     @PatchMapping("/{id}")
     public ResponseEntity<Void> patch(
@@ -126,7 +126,7 @@ public class WorkoutController {
      * @param id the id of the workout
      * @param dto the data for the workout
      * @param principal the user principal
-     * @return a no-content response with the location of the replaced workout
+     * @return a no-content response with the location of the workout
      */
     @PutMapping("/{id}")
     public ResponseEntity<Void> put(
@@ -144,7 +144,7 @@ public class WorkoutController {
     }
 
     /**
-     * Deletes the data of the workout with the given id.
+     * Deletes the workout with the given id.
      *
      * @param id the id of the workout
      * @param user the user principal
@@ -160,6 +160,6 @@ public class WorkoutController {
     }
 
     private WorkoutDto fromResultToDto(final WorkoutResult result) {
-        return new WorkoutDto(result.id(), result.segments(), result.name(), result.notes());
+        return new WorkoutDto(result.id(), result.segmentIds(), result.name(), result.notes());
     }
 }

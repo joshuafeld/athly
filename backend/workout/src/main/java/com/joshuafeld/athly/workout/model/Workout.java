@@ -1,6 +1,7 @@
 package com.joshuafeld.athly.workout.model;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -29,7 +30,8 @@ public class Workout {
     @Setter(AccessLevel.NONE)
     private Long id;
 
-    private Long owner;
+    @Column(nullable = false)
+    private Long ownerId;
 
     @OneToMany(
             mappedBy = "workout",
@@ -45,18 +47,18 @@ public class Workout {
     /**
      * Creates an instance of a {@code Workout} class.
      *
-     * @param owner the value for the {@code owner} component
+     * @param ownerId the value for the {@code ownerId} component
      * @param segments the value for the {@code segments} component
      * @param name the value for the {@code name} component
      * @param notes the value for the {@code notes} component
      */
     public Workout(
-            final Long owner,
+            final Long ownerId,
             final List<Segment> segments,
             final String name,
             final String notes
     ) {
-        this.owner = owner;
+        this.ownerId = ownerId;
         this.segments = segments;
         this.name = name;
         this.notes = notes;

@@ -16,34 +16,34 @@ import java.util.Optional;
 public interface WorkoutRepository extends JpaRepository<Workout, Long> {
 
     /**
-     * Deletes the workout with the given id and owner.
+     * Deletes the workout with the given id and owner id.
      *
      * @param id the id
-     * @param owner the owner
+     * @param ownerId the owner id
      * @return {@code 1} if a workout was deleted, {@code 0} otherwise
      */
     @Modifying
     @Query("""
         delete from Workout w
         where w.id = :id
-          and w.owner = :owner
+          and w.ownerId = :ownerId
     """)
-    int deleteByIdAndOwner(final Long id, final Long owner);
+    int deleteByIdAndOwnerId(final Long id, final Long ownerId);
 
     /**
-     * Retrieves all workouts by their owner.
+     * Retrieves all workouts by their owner id.
      *
-     * @param owner the owner
-     * @return a list of all workouts with the given owner
+     * @param ownerId the owner id
+     * @return a list of all workouts with the given owner id
      */
-    List<Workout> findAllByOwner(final Long owner);
+    List<Workout> findAllByOwnerId(final Long ownerId);
 
     /**
-     * Retrieves a workout by its id and owner.
+     * Retrieves a workout by its id and owner id.
      *
      * @param id the id
-     * @param owner the owner
-     * @return the workout with the given id and owner or {@code Optional#empty()} if none found
+     * @param ownerId the owner id
+     * @return the workout with the given id and owner id or {@code Optional#empty()} if none found
      */
-    Optional<Workout> findByIdAndOwner(final Long id, final Long owner);
+    Optional<Workout> findByIdAndOwnerId(final Long id, final Long ownerId);
 }
