@@ -24,22 +24,4 @@ public class WorkoutNotFoundException extends ErrorResponseException {
                 null
         );
     }
-
-    /**
-     * Creates an instance of a {@code WorkoutNotFoundException} class.
-     *
-     * @param id the {@code id} of the workout
-     * @param creator the {@code creator} of the workout
-     */
-    public WorkoutNotFoundException(final Long id, final Long creator) {
-        super(
-                HttpStatus.NOT_FOUND,
-                new ProblemDetailBuilder(HttpStatus.NOT_FOUND)
-                        .title("Workout Not Found")
-                        .detail("Workout with id " + id + " and creator "
-                                + creator + " not found")
-                        .build(),
-                null
-        );
-    }
 }
